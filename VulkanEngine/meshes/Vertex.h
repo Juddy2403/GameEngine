@@ -10,11 +10,11 @@
 #include <glm/gtx/hash.hpp>
 
 struct Vertex3D {
-    alignas(16) glm::vec3 m_Pos{};
-    alignas(16) glm::vec3 m_Normal{};
-    alignas(16) glm::vec3 m_Color{ 1,1,1 };
-    alignas(16) glm::vec2 m_TexCoord;
-    alignas(16) glm::vec3 m_Tangent{};
+    glm::vec3 m_Pos{};
+    glm::vec3 m_Normal{};
+    glm::vec3 m_Color{ 1,1,1 };
+    glm::vec2 m_TexCoord;
+    glm::vec3 m_Tangent{};
 
     static VkPipelineVertexInputStateCreateInfo CreateVertexInputStateInfo()
     {

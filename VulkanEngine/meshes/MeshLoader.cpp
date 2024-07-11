@@ -142,13 +142,13 @@ void MeshLoader::InitializeCube(Mesh3D &mesh, const glm::vec3 &bottomLeftBackCor
 
     const glm::vec3 bottomLeftBackCornerCentered = -sideLength * 0.5f * glm::vec3(1,1,1);
 
-    const glm::vec3 bottomRightBackCorner = bottomLeftBackCornerCentered + sideLength * Camera::RIGHT;
-    const glm::vec3 topLeftBackCorner = bottomLeftBackCornerCentered + sideLength * Camera::UP;
-    const glm::vec3 topRightBackCorner = bottomRightBackCorner + sideLength * Camera::UP;
-    const glm::vec3 bottomLeftFrontCorner = bottomLeftBackCornerCentered + sideLength * Camera::FORWARD;
-    const glm::vec3 bottomRightFrontCorner = bottomRightBackCorner + sideLength * Camera::FORWARD;
-    const glm::vec3 topLeftFrontCorner = topLeftBackCorner + sideLength * Camera::FORWARD;
-    const glm::vec3 topRightFrontCorner = topRightBackCorner + sideLength * Camera::FORWARD;
+    const glm::vec3 bottomRightBackCorner = bottomLeftBackCornerCentered + sideLength * Camera::right;
+    const glm::vec3 topLeftBackCorner = bottomLeftBackCornerCentered + sideLength * Camera::up;
+    const glm::vec3 topRightBackCorner = bottomRightBackCorner + sideLength * Camera::up;
+    const glm::vec3 bottomLeftFrontCorner = bottomLeftBackCornerCentered + sideLength * Camera::forward;
+    const glm::vec3 bottomRightFrontCorner = bottomRightBackCorner + sideLength * Camera::forward;
+    const glm::vec3 topLeftFrontCorner = topLeftBackCorner + sideLength * Camera::forward;
+    const glm::vec3 topRightFrontCorner = topRightBackCorner + sideLength * Camera::forward;
 
     Vertex3D bottomLeftBackCornerVertex{bottomLeftBackCornerCentered};
     Vertex3D topRightFrontCornerVertex{topRightFrontCorner};

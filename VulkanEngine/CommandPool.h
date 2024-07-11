@@ -3,22 +3,22 @@
 #include <optional>
 
 struct QueueFamilyIndices {
-	std::optional<uint32_t> graphicsFamily;
-	std::optional<uint32_t> presentFamily;
+	std::optional<uint32_t> m_GraphicsFamily;
+	std::optional<uint32_t> m_PresentFamily;
 
 	[[nodiscard]] bool IsComplete() const {
-		return graphicsFamily.has_value() && presentFamily.has_value();
+		return m_GraphicsFamily.has_value() && m_PresentFamily.has_value();
 	}
 };
 class CommandPool
 {
 public:
 	CommandPool() = default;
-	void DestroyCommandPool();
+	void DestroyCommandPool() const;
 	explicit CommandPool(const VkSurfaceKHR& surface, const QueueFamilyIndices& queueFamilyIndices);
-	const VkCommandPool& GetCommandPool();
+	const VkCommandPool& GetCommandPool() const;
 private:
-	VkCommandPool CreateCommandPool(const VkSurfaceKHR& surface, const QueueFamilyIndices& queueFamilyIndices, VkCommandPoolCreateFlags flags);
+	static VkCommandPool CreateCommandPool(const VkSurfaceKHR& surface, const QueueFamilyIndices& queueFamilyIndices, VkCommandPoolCreateFlags flags);
 	VkCommandPool m_CommandPool{};
 
 };

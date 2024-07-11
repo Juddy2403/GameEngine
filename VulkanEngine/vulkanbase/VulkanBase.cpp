@@ -165,14 +165,14 @@ QueueFamilyIndices VulkanBase::FindQueueFamilies(VkPhysicalDevice vkDevice) {
     int i = 0;
     for (const auto &queueFamily: queueFamilies) {
         if (queueFamily.queueFlags & VK_QUEUE_GRAPHICS_BIT) {
-            indices.graphicsFamily = i;
+            indices.m_GraphicsFamily = i;
         }
 
         VkBool32 presentSupport = false;
         vkGetPhysicalDeviceSurfaceSupportKHR(vkDevice, i, surface, &presentSupport);
 
         if (presentSupport) {
-            indices.presentFamily = i;
+            indices.m_PresentFamily = i;
         }
 
         if (indices.IsComplete()) {
@@ -226,7 +226,7 @@ void VulkanBase::CreateLogicalDevice() {
     QueueFamilyIndices indices = FindQueueFamilies(physicalDevice);
 
     std::vector<VkDeviceQueueCreateInfo> queueCreateInfos;
-    std::set<uint32_t> uniqueQueueFamilies = {indices.graphicsFamily.value(), indices.presentFamily.value()};
+    std::set<uint32_t> uniqueQueueFamilies = {indices.m_GraphicsFamily.value(), indices.m_PresentFamily.value()};
 
     float queuePriority = 1.0f;
     for (uint32_t queueFamily: uniqueQueueFamilies) {
@@ -240,7 +240,7 @@ void VulkanBase::CreateLogicalDevice() {
 
     VkDeviceQueueCreateInfo queueCreateInfo{};
     queueCreateInfo.sType = VK_STRUCTURE_TYPE_DEVICE_QUEUE_CREATE_INFO;
-    queueCreateInfo.queueFamilyIndex = indices.graphicsFamily.value();
+    queueCreateInfo.queueFamilyIndex = indices.m_GraphicsFamily.value();
     queueCreateInfo.queueCount = 1;
 
     VkPhysicalDeviceFeatures deviceFeatures{};
@@ -268,8 +268,8 @@ void VulkanBase::CreateLogicalDevice() {
         throw std::runtime_error("failed to create logical device!");
     }
 
-    vkGetDeviceQueue(device, indices.graphicsFamily.value(), 0, &graphicsQueue);
-    vkGetDeviceQueue(device, indices.presentFamily.value(), 0, &presentQueue);
+    vkGetDeviceQueue(device, indices.m_GraphicsFamily.value(), 0, &graphicsQueue);
+    vkGetDeviceQueue(device, indices.m_PresentFamily.value(), 0, &presentQueue);
 }
 
 void VulkanBase::PopulateDebugMessengerCreateInfo(VkDebugUtilsMessengerCreateInfoEXT &createInfo) {

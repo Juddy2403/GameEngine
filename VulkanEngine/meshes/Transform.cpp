@@ -1,6 +1,7 @@
 #include <glm/ext/matrix_transform.hpp>
 #include "Transform.h"
 #include "Camera.h"
+#include "TimeManager.h"
 #define GLM_FORCE_RADIANS
 #define GLM_FORCE_DEPTH_ZERO_TO_ONE
 
@@ -10,9 +11,9 @@ void Transform::Translate(const glm::vec3 &translation) {
 }
 
 void Transform::Rotate(const glm::vec3 &rotation) {
-    m_RotationMatrix = glm::rotate(m_RotationMatrix, glm::radians(rotation.x), Camera::RIGHT);
-    m_RotationMatrix = glm::rotate(m_RotationMatrix, glm::radians(rotation.y), Camera::UP);
-    m_RotationMatrix = glm::rotate(m_RotationMatrix, glm::radians(rotation.z), Camera::FORWARD);
+    m_RotationMatrix = glm::rotate(m_RotationMatrix, glm::radians(rotation.x), Camera::right);
+    m_RotationMatrix = glm::rotate(m_RotationMatrix, glm::radians(rotation.y), Camera::up);
+    m_RotationMatrix = glm::rotate(m_RotationMatrix, glm::radians(rotation.z), Camera::forward);
 
     m_NeedsUpdate = true;
 }

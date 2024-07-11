@@ -1,0 +1,7 @@
+../Data/Audio/BossDeath.mp3
+../Data/Audio/CapturedShip.mp3
+../Data/Audio/EnemyDies.mp3
+../Data/Audio/PlayerDies.mp3
+../Data/Audio/PlayerShoot.mp3
+../Data/Audio/Start.mp3
+../Data/Audio/TractorBeam.mp3

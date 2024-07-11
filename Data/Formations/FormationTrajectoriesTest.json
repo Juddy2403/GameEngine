@@ -1,0 +1,21 @@
+[
+  {
+    "startPos": [ 310, -20 ],
+    "trajectory": [
+      {
+        "isRotating": false,
+        "destination": [ 100, 320 ]
+      },
+      {
+        "isRotating": true,
+        "isRotatingClockwise": false,
+        "totalRotationAngle": 3.49066,
+        "centerOfRotation": [ 100, 370 ]
+      },
+      {
+        "isRotating": false,
+        "destination": "formationPos"
+      }
+    ]
+  }
+]

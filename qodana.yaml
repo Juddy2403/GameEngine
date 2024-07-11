@@ -1,0 +1,40 @@
+﻿#-------------------------------------------------------------------------------#
+#               Qodana analysis is configured by qodana.yaml file               #
+#             https://www.jetbrains.com/help/qodana/qodana-yaml.html            #
+#-------------------------------------------------------------------------------#
+version: "1.0"
+
+#Specify IDE code to run analysis without container (Applied in CI/CD pipeline)
+ide: QDNET
+
+#Specify inspection profile for code analysis
+profile:
+  name: qodana.starter
+
+#Enable inspections
+#include:
+#  - name: <SomeEnabledInspectionId>
+
+#Disable inspections
+#exclude:
+#  - name: <SomeDisabledInspectionId>
+#    paths:
+#      - <path/where/not/run/inspection>
+
+#Execute shell command before Qodana execution (Applied in CI/CD pipeline)
+#bootstrap: sh ./prepare-qodana.sh
+
+#Install IDE plugins before Qodana execution (Applied in CI/CD pipeline)
+#plugins:
+#  - id: <plugin.id> #(plugin id can be found at https://plugins.jetbrains.com)
+exclude:
+  - name: All
+    paths:
+      - 3rdParty\imgui-1.89.5\imgui.cpp
+      - 3rdParty\imgui-1.89.5\imgui_demo.cpp
+      - 3rdParty\imgui-1.89.5\imgui_draw.cpp
+      - 3rdParty\imgui-1.89.5\imgui_tables.cpp
+      - 3rdParty\imgui-1.89.5\imgui_widgets.cpp
+      - 3rdParty\imgui-1.89.5\imstb_truetype.h
+      - 3rdParty\imgui-1.89.5\imgui_plot.cpp
+      - 3rdParty\imgui-1.89.5

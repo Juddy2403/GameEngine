@@ -1,0 +1,11 @@
+[
+  {
+    "enemyType": "Bee",
+    "positions": [
+      {"formationPosition": [298, 38], "formationStage": 0, "turn": 1},
+      {"formationPosition": [335, 38], "formationStage": 0, "turn": 2},
+      {"formationPosition": [261, 38], "formationStage": 0, "turn": 3},
+      {"formationPosition": [372, 38], "formationStage": 0, "turn": 4}
+    ]
+  }
+]

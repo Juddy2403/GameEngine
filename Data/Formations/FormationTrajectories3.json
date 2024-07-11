@@ -1,0 +1,105 @@
+[
+  {
+    "startPos": [ 310, -20 ],
+    "trajectory": [
+      {
+        "isRotating": false,
+        "destination": [ 150, 150 ]
+      },
+      {
+        "isRotating": true,
+        "isRotatingClockwise": false,
+        "totalRotationAngle": 3.14159,
+        "centerOfRotation": [ 150, 200 ]
+      },
+      {
+        "isRotating": false,
+        "destination": "formationPos"
+      }
+    ]
+  },
+  {
+    "startPos": [ -30, 680 ],
+    "trajectory": [
+      {
+        "isRotating": false,
+        "destination": [ 250, 400 ]
+      },
+      {
+        "isRotating": true,
+        "isRotatingClockwise": false,
+        "totalRotationAngle": 6.28318,
+        "centerOfRotation": [ 250, 350 ]
+      },
+      {
+        "isRotating": false,
+        "destination": [ 200, 150 ]
+      },
+      {
+        "isRotating": false,
+        "destination": "formationPos"
+      }
+    ]
+  },
+  {
+    "startPos": [ 700, 680 ],
+    "trajectory": [
+      {
+        "isRotating": false,
+        "destination": [ 400, 400 ]
+      },
+      {
+        "isRotating": true,
+        "isRotatingClockwise": true,
+        "totalRotationAngle": 6.28318,
+        "centerOfRotation": [ 400, 350 ]
+      },
+      {
+        "isRotating": false,
+        "destination": [ 350, 150 ]
+      },
+      {
+        "isRotating": false,
+        "destination": "formationPos"
+      }
+    ]
+  },
+  {
+    "startPos": [ 515, -30 ],
+    "trajectory": [
+      {
+        "isRotating": false,
+        "destination": [ 300, 150 ]
+      },
+      {
+        "isRotating": true,
+        "isRotatingClockwise": false,
+        "totalRotationAngle": 4.71239,
+        "centerOfRotation": [ 300, 200 ]
+      },
+      {
+        "isRotating": false,
+        "destination": "formationPos"
+      }
+    ]
+  },
+  {
+    "startPos": [ 157, -30 ],
+    "trajectory": [
+      {
+        "isRotating": false,
+        "destination": [ 500, 150 ]
+      },
+      {
+        "isRotating": true,
+        "isRotatingClockwise": true,
+        "totalRotationAngle": 4.71239,
+        "centerOfRotation": [ 500, 200 ]
+      },
+      {
+        "isRotating": false,
+        "destination": "formationPos"
+      }
+    ]
+  }
+]

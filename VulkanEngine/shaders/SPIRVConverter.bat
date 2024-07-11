@@ -1,0 +1,2 @@
+forfiles /s /m *.vert /c "cmd /c %VULKAN_SDK%/Bin/glslang.exe @path -V -o CompiledSpv/@fname.vert.spv"
+forfiles /s /m *.frag /c "cmd /c %VULKAN_SDK%/Bin/glslang.exe @path -V -o CompiledSpv/@fname.frag.spv"

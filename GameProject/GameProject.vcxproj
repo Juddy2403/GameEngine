@@ -1,0 +1,260 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup Label="ProjectConfigurations">
+    <ProjectConfiguration Include="Debug|Win32">
+      <Configuration>Debug</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|Win32">
+      <Configuration>Release</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Debug|x64">
+      <Configuration>Debug</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|x64">
+      <Configuration>Release</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+  </ItemGroup>
+  <PropertyGroup Label="Globals">
+    <VCProjectVersion>17.0</VCProjectVersion>
+    <Keyword>Win32Proj</Keyword>
+    <ProjectGuid>{06a93524-b932-45bf-9c1a-6cf731727375}</ProjectGuid>
+    <RootNamespace>GameProject</RootNamespace>
+    <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <UseDebugLibraries>true</UseDebugLibraries>
+    <PlatformToolset>v143</PlatformToolset>
+    <CharacterSet>Unicode</CharacterSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <UseDebugLibraries>false</UseDebugLibraries>
+    <PlatformToolset>v143</PlatformToolset>
+    <WholeProgramOptimization>true</WholeProgramOptimization>
+    <CharacterSet>Unicode</CharacterSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <UseDebugLibraries>true</UseDebugLibraries>
+    <PlatformToolset>v143</PlatformToolset>
+    <CharacterSet>Unicode</CharacterSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <UseDebugLibraries>false</UseDebugLibraries>
+    <PlatformToolset>v143</PlatformToolset>
+    <WholeProgramOptimization>true</WholeProgramOptimization>
+    <CharacterSet>Unicode</CharacterSet>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
+  <ImportGroup Label="ExtensionSettings">
+  </ImportGroup>
+  <ImportGroup Label="Shared">
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+    <Import Project="..\sdl.props" />
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+    <Import Project="..\sdl.props" />
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+    <Import Project="..\sdl.props" />
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+    <Import Project="..\sdl.props" />
+  </ImportGroup>
+  <PropertyGroup Label="UserMacros" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <OutDir>$(SolutionDir)$(Platform)\$(Configuration)\</OutDir>
+    <IntDir>$(Platform)\$(Configuration)\$(ProjectName)\</IntDir>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <OutDir>$(SolutionDir)$(Platform)\$(Configuration)\</OutDir>
+    <IntDir>$(Platform)\$(Configuration)\$(ProjectName)\</IntDir>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <IntDir>$(Platform)\$(Configuration)\$(ProjectName)\</IntDir>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <IntDir>$(Platform)\$(Configuration)\$(ProjectName)\</IntDir>
+  </PropertyGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <ClCompile>
+      <WarningLevel>Level4</WarningLevel>
+      <SDLCheck>true</SDLCheck>
+      <PreprocessorDefinitions>WIN32;_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <ConformanceMode>true</ConformanceMode>
+      <LanguageStandard>stdcpp20</LanguageStandard>
+      <AdditionalIncludeDirectories>$(SolutionDir)Minigin;$(SolutionDir)GameProject;$(SolutionDir)3rdParty\nlohmann;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <TreatWarningAsError>true</TreatWarningAsError>
+    </ClCompile>
+    <Link>
+      <SubSystem>Console</SubSystem>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <AdditionalLibraryDirectories>$(OutputPath);%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>Minigin.lib;%(AdditionalDependencies)</AdditionalDependencies>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <ClCompile>
+      <WarningLevel>Level4</WarningLevel>
+      <FunctionLevelLinking>true</FunctionLevelLinking>
+      <IntrinsicFunctions>true</IntrinsicFunctions>
+      <SDLCheck>true</SDLCheck>
+      <PreprocessorDefinitions>WIN32;NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <ConformanceMode>true</ConformanceMode>
+      <LanguageStandard>stdcpp20</LanguageStandard>
+      <AdditionalIncludeDirectories>$(SolutionDir)Minigin;$(SolutionDir)GameProject;$(SolutionDir)3rdParty\nlohmann;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
+      <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
+      <TreatWarningAsError>true</TreatWarningAsError>
+    </ClCompile>
+    <Link>
+      <SubSystem>Console</SubSystem>
+      <EnableCOMDATFolding>true</EnableCOMDATFolding>
+      <OptimizeReferences>true</OptimizeReferences>
+      <AdditionalLibraryDirectories>$(OutputPath);%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>Minigin.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <ClCompile>
+      <WarningLevel>Level4</WarningLevel>
+      <SDLCheck>true</SDLCheck>
+      <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <ConformanceMode>true</ConformanceMode>
+      <LanguageStandard>stdcpp20</LanguageStandard>
+      <AdditionalIncludeDirectories>$(SolutionDir)Minigin;$(SolutionDir)GameProject;$(SolutionDir)3rdParty\nlohmann;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <TreatWarningAsError>true</TreatWarningAsError>
+    </ClCompile>
+    <Link>
+      <SubSystem>Console</SubSystem>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <AdditionalLibraryDirectories>$(OutputPath);%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>Minigin.lib;%(AdditionalDependencies)</AdditionalDependencies>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <ClCompile>
+      <WarningLevel>Level4</WarningLevel>
+      <FunctionLevelLinking>true</FunctionLevelLinking>
+      <IntrinsicFunctions>true</IntrinsicFunctions>
+      <SDLCheck>true</SDLCheck>
+      <PreprocessorDefinitions>NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <ConformanceMode>true</ConformanceMode>
+      <LanguageStandard>stdcpp20</LanguageStandard>
+      <AdditionalIncludeDirectories>$(SolutionDir)Minigin;$(SolutionDir)GameProject;$(SolutionDir)3rdParty\nlohmann;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
+      <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
+      <TreatWarningAsError>true</TreatWarningAsError>
+    </ClCompile>
+    <Link>
+      <SubSystem>Console</SubSystem>
+      <EnableCOMDATFolding>true</EnableCOMDATFolding>
+      <OptimizeReferences>true</OptimizeReferences>
+      <AdditionalLibraryDirectories>$(OutputPath);%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>Minigin.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemGroup>
+    <ClCompile Include="BulletTracker.cpp" />
+    <ClCompile Include="Enemy States\BombingRunState.cpp" />
+    <ClCompile Include="Enemy States\BossShootingBeamState.cpp" />
+    <ClCompile Include="Enemy States\BossHealthStage.cpp" />
+    <ClCompile Include="Enemy States\ButterflyBombingRunState.cpp" />
+    <ClCompile Include="Enemy States\GetInFormationState.cpp" />
+    <ClCompile Include="Enemy States\IdleState.cpp" />
+    <ClCompile Include="Galaga.cpp" />
+    <ClCompile Include="Game components\BackgroundComponent.cpp" />
+    <ClCompile Include="Game components\BulletComponent.cpp" />
+    <ClCompile Include="Game components\CapturedFighterComponent.cpp" />
+    <ClCompile Include="Game components\Enemy components\BeamComponent.cpp" />
+    <ClCompile Include="Game components\Enemy components\BeeComponent.cpp" />
+    <ClCompile Include="Game components\Enemy components\BossGalagaComponent.cpp" />
+    <ClCompile Include="Game components\Enemy components\ButterflyComponent.cpp" />
+    <ClCompile Include="Game components\Enemy components\EnemyBulletComponent.cpp" />
+    <ClCompile Include="Game components\Enemy components\EnemyComponent.cpp" />
+    <ClCompile Include="Game components\ExplosionComponent.cpp" />
+    <ClCompile Include="Game components\FormationComponent.cpp" />
+    <ClCompile Include="Game components\FPSComponent.cpp" />
+    <ClCompile Include="Game components\ModeSelectionComp.cpp" />
+    <ClCompile Include="Game components\NameSelectionComp.cpp" />
+    <ClCompile Include="Game components\PlayerHealthComponent.cpp" />
+    <ClCompile Include="Game components\PlayerComponent.cpp" />
+    <ClCompile Include="Game components\ScoreComponent.cpp" />
+    <ClCompile Include="Game observers\BulletObserver.cpp" />
+    <ClCompile Include="Game observers\EnemyAIManager.cpp" />
+    <ClCompile Include="Game observers\EnemyAttacksObserver.cpp" />
+    <ClCompile Include="Game observers\EnemyObserver.cpp" />
+    <ClCompile Include="Game observers\ExplosionObserver.cpp" />
+    <ClCompile Include="Game observers\FighterObserver.cpp" />
+    <ClCompile Include="Game observers\FormationObserver.cpp" />
+    <ClCompile Include="Game observers\ScoreManager.cpp" />
+    <ClCompile Include="GameCommands.cpp" />
+    <ClCompile Include="Initializers.cpp" />
+    <ClCompile Include="main.cpp" />
+    <ClCompile Include="RotatingSprite.cpp" />
+    <ClCompile Include="Trajectory Logic\Trajectory.cpp" />
+    <ClCompile Include="Trajectory Logic\TrajectoryStates.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="BulletTracker.h" />
+    <ClInclude Include="DataStructs.h" />
+    <ClInclude Include="Enemy States\BombingRunState.h" />
+    <ClInclude Include="Enemy States\BossShootingBeamState.h" />
+    <ClInclude Include="Enemy States\BossHealthStage.h" />
+    <ClInclude Include="Enemy States\ButterflyBombingRunState.h" />
+    <ClInclude Include="Enemy States\EnemyState.h" />
+    <ClInclude Include="Enemy States\GetInFormationState.h" />
+    <ClInclude Include="Enemy States\IdleState.h" />
+    <ClInclude Include="Game components\BackgroundComponent.h" />
+    <ClInclude Include="Game components\BulletComponent.h" />
+    <ClInclude Include="Game components\CapturedFighterComponent.h" />
+    <ClInclude Include="Game components\Enemy components\BeamComponent.h" />
+    <ClInclude Include="Game components\Enemy components\BeeComponent.h" />
+    <ClInclude Include="Game components\Enemy components\BossGalagaComponent.h" />
+    <ClInclude Include="Galaga.h" />
+    <ClInclude Include="Game components\Enemy components\ButterflyComponent.h" />
+    <ClInclude Include="Game components\Enemy components\EnemyBulletComponent.h" />
+    <ClInclude Include="Game components\Enemy components\EnemyComponent.h" />
+    <ClInclude Include="Game components\ExplosionComponent.h" />
+    <ClInclude Include="Game components\FormationComponent.h" />
+    <ClInclude Include="Game components\FPSComponent.h" />
+    <ClInclude Include="Game components\ModeSelectionComp.h" />
+    <ClInclude Include="Game components\NameSelectionComp.h" />
+    <ClInclude Include="Game components\PlayerHealthComponent.h" />
+    <ClInclude Include="Game components\PlayerComponent.h" />
+    <ClInclude Include="Game components\ScoreComponent.h" />
+    <ClInclude Include="Game observers\BulletObserver.h" />
+    <ClInclude Include="Game observers\EnemyAIManager.h" />
+    <ClInclude Include="Game observers\EnemyAttacksObserver.h" />
+    <ClInclude Include="Game observers\EnemyObserver.h" />
+    <ClInclude Include="Game observers\ExplosionObserver.h" />
+    <ClInclude Include="Game observers\FighterObserver.h" />
+    <ClInclude Include="Game observers\FormationObserver.h" />
+    <ClInclude Include="Game observers\ScoreManager.h" />
+    <ClInclude Include="GameCommands.h" />
+    <ClInclude Include="Initializers.h" />
+    <ClInclude Include="RotatingSprite.h" />
+    <ClInclude Include="Trajectory Logic\PathDataStruct.h" />
+    <ClInclude Include="Trajectory Logic\Trajectory.h" />
+    <ClInclude Include="Trajectory Logic\TrajectoryMath.h" />
+    <ClInclude Include="Trajectory Logic\Parsers.h" />
+    <ClInclude Include="Trajectory Logic\TrajectoryStates.h" />
+  </ItemGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
+  <ImportGroup Label="ExtensionTargets">
+  </ImportGroup>
+</Project>

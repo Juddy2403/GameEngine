@@ -1,0 +1,12 @@
+[
+  {
+    "isRotating": false,
+    "destination": [100.0,200.0]
+  },
+  {
+    "isRotating": true,
+    "isRotatingClockwise": true,
+    "totalRotationAngle": 12.56,
+    "centerOfRotation": [50.0,50.0]
+  }
+]

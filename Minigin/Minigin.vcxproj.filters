@@ -1,0 +1,236 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="Game Files">
+      <UniqueIdentifier>{cb0285a0-7d2e-4c95-959b-5b4568e8a7cd}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Math">
+      <UniqueIdentifier>{874e513f-93ba-463e-a340-c8acc3569259}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="IMGUI">
+      <UniqueIdentifier>{21a8ac20-09c3-4ab4-83a3-34d5a81184ba}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Input">
+      <UniqueIdentifier>{78777c5c-c938-4812-89ee-487f3a3978e3}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="GameObjects">
+      <UniqueIdentifier>{3ccf6360-f78c-42c7-8d72-7478eda10a44}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Singletons">
+      <UniqueIdentifier>{a958dc02-1285-4214-aa4e-d304ae6bc8b3}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Files">
+      <UniqueIdentifier>{2383489e-a44e-40ea-9200-db57cdabf263}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Files\Source Files">
+      <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
+      <Extensions>cpp;c;cc;cxx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
+    </Filter>
+    <Filter Include="Files\Header Files">
+      <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
+      <Extensions>h;hh;hpp;hxx;hm;inl;inc;xsd</Extensions>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="Scene.h">
+      <Filter>Files\Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Minigin.h">
+      <Filter>Game Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Transform.h">
+      <Filter>Math</Filter>
+    </ClInclude>
+    <ClInclude Include="..\3rdParty\imgui-1.89.5\imconfig.h">
+      <Filter>IMGUI</Filter>
+    </ClInclude>
+    <ClInclude Include="..\3rdParty\imgui-1.89.5\imgui.h">
+      <Filter>IMGUI</Filter>
+    </ClInclude>
+    <ClInclude Include="..\3rdParty\imgui-1.89.5\imgui_internal.h">
+      <Filter>IMGUI</Filter>
+    </ClInclude>
+    <ClInclude Include="..\3rdParty\imgui-1.89.5\imstb_rectpack.h">
+      <Filter>IMGUI</Filter>
+    </ClInclude>
+    <ClInclude Include="..\3rdParty\imgui-1.89.5\imstb_textedit.h">
+      <Filter>IMGUI</Filter>
+    </ClInclude>
+    <ClInclude Include="..\3rdParty\imgui-1.89.5\imstb_truetype.h">
+      <Filter>IMGUI</Filter>
+    </ClInclude>
+    <ClInclude Include="..\3rdParty\imgui-1.89.5\backends\imgui_impl_opengl3.h">
+      <Filter>IMGUI</Filter>
+    </ClInclude>
+    <ClInclude Include="..\3rdParty\imgui-1.89.5\backends\imgui_impl_sdl2.h">
+      <Filter>IMGUI</Filter>
+    </ClInclude>
+    <ClInclude Include="..\3rdParty\imgui-1.89.5\imgui_plot.h">
+      <Filter>IMGUI</Filter>
+    </ClInclude>
+    <ClInclude Include="IObserver.h">
+      <Filter>Files\Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Components\CollisionComponent.h">
+      <Filter>Files\Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Components\Component.h">
+      <Filter>Files\Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Components\SpriteComponent.h">
+      <Filter>Files\Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Components\TextComponent.h">
+      <Filter>Files\Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Components\TextureComponent.h">
+      <Filter>Files\Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="EventData.h">
+      <Filter>Files\Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Input\Command.h">
+      <Filter>Files\Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Input\Controller.h">
+      <Filter>Files\Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Input\KeyboardInput.h">
+      <Filter>Files\Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Managers\CollisionManager.h">
+      <Filter>Files\Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Managers\InputManager.h">
+      <Filter>Files\Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Managers\ResourceManager.h">
+      <Filter>Files\Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Managers\SceneManager.h">
+      <Filter>Files\Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Managers\Singleton.h">
+      <Filter>Files\Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Managers\TimeManager.h">
+      <Filter>Files\Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Renderable\Font.h">
+      <Filter>Files\Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Renderable\Renderer.h">
+      <Filter>Files\Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Renderable\Texture2D.h">
+      <Filter>Files\Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Sound\DerivedSoundSystems.h">
+      <Filter>Files\Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Sound\ISoundSystem.h">
+      <Filter>Files\Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Sound\ServiceLocator.h">
+      <Filter>Files\Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Subjects\GameObject.h">
+      <Filter>Files\Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Subjects\Subject.h">
+      <Filter>Files\Header Files</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="Scene.cpp">
+      <Filter>Files\Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Minigin.cpp">
+      <Filter>Game Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Transform.cpp">
+      <Filter>Math</Filter>
+    </ClCompile>
+    <ClCompile Include="..\3rdParty\imgui-1.89.5\imgui.cpp">
+      <Filter>IMGUI</Filter>
+    </ClCompile>
+    <ClCompile Include="..\3rdParty\imgui-1.89.5\imgui_draw.cpp">
+      <Filter>IMGUI</Filter>
+    </ClCompile>
+    <ClCompile Include="..\3rdParty\imgui-1.89.5\imgui_tables.cpp">
+      <Filter>IMGUI</Filter>
+    </ClCompile>
+    <ClCompile Include="..\3rdParty\imgui-1.89.5\imgui_widgets.cpp">
+      <Filter>IMGUI</Filter>
+    </ClCompile>
+    <ClCompile Include="..\3rdParty\imgui-1.89.5\backends\imgui_impl_opengl3.cpp">
+      <Filter>IMGUI</Filter>
+    </ClCompile>
+    <ClCompile Include="..\3rdParty\imgui-1.89.5\backends\imgui_impl_sdl2.cpp">
+      <Filter>IMGUI</Filter>
+    </ClCompile>
+    <ClCompile Include="..\3rdParty\imgui-1.89.5\imgui_plot.cpp">
+      <Filter>IMGUI</Filter>
+    </ClCompile>
+    <ClCompile Include="Components\CollisionComponent.cpp">
+      <Filter>Files\Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Components\Component.cpp">
+      <Filter>Files\Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Components\SpriteComponent.cpp">
+      <Filter>Files\Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Components\TextComponent.cpp">
+      <Filter>Files\Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Components\TextureComponent.cpp">
+      <Filter>Files\Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Input\Command.cpp">
+      <Filter>Files\Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Input\Controller.cpp">
+      <Filter>Files\Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Input\KeyboardInput.cpp">
+      <Filter>Files\Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Managers\CollisionManager.cpp">
+      <Filter>Files\Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Managers\InputManager.cpp">
+      <Filter>Files\Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Managers\ResourceManager.cpp">
+      <Filter>Files\Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Managers\SceneManager.cpp">
+      <Filter>Files\Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Managers\TimeManager.cpp">
+      <Filter>Files\Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Renderable\Font.cpp">
+      <Filter>Files\Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Renderable\Renderer.cpp">
+      <Filter>Files\Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Renderable\Texture2D.cpp">
+      <Filter>Files\Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Sound\DerivedSoundSystems.cpp">
+      <Filter>Files\Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Sound\ISoundSystem.cpp">
+      <Filter>Files\Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Subjects\GameObject.cpp">
+      <Filter>Files\Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Subjects\Subject.cpp">
+      <Filter>Files\Source Files</Filter>
+    </ClCompile>
+  </ItemGroup>
+</Project>

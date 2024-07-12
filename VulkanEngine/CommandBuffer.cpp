@@ -1,6 +1,21 @@
 #include "CommandBuffer.h"
 #include "vulkanbase/VulkanBase.h"
 
+CommandBuffer::CommandBuffer(CommandBuffer&& other) noexcept
+{
+    m_CommandBuffer = other.m_CommandBuffer;
+    other.m_CommandBuffer = VK_NULL_HANDLE;
+}
+CommandBuffer& CommandBuffer::operator=(CommandBuffer&& other) noexcept
+{
+    if (this == &other) return *this;
+    //TODO: make the command pool accessible and uncomment
+    //if (m_CommandBuffer != VK_NULL_HANDLE) FreeCommandBuffer(VulkanBase::m_CommandPool);
+    m_CommandBuffer = other.m_CommandBuffer;
+    other.m_CommandBuffer = VK_NULL_HANDLE;
+    return *this;
+}
+
 CommandBuffer::CommandBuffer(const VkCommandPool& commandPool)
 {
     m_CommandBuffer = CreateCommandBuffer(commandPool);

@@ -14,6 +14,20 @@ VkCommandPool CommandPool::CreateCommandPool(const VkSurfaceKHR& surface, const 
     return commandPool;
 }
 
+CommandPool::CommandPool(CommandPool&& other) noexcept
+{
+    m_CommandPool = other.m_CommandPool;
+    other.m_CommandPool = VK_NULL_HANDLE;
+}
+CommandPool& CommandPool::operator=(CommandPool&& other) noexcept
+{
+    if (this == &other) return *this;
+    if (m_CommandPool != VK_NULL_HANDLE) DestroyCommandPool();
+    m_CommandPool = other.m_CommandPool;
+    other.m_CommandPool = VK_NULL_HANDLE;
+    return *this;
+}
+
 void CommandPool::DestroyCommandPool() const
 {
     vkDestroyCommandPool(VulkanBase::device, m_CommandPool, nullptr);

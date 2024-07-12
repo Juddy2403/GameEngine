@@ -5,6 +5,12 @@ class CommandBuffer
 {
 public:
     CommandBuffer() = default;
+    ~CommandBuffer() = default; 
+    CommandBuffer(const CommandBuffer& other) = delete;
+    CommandBuffer& operator=(const CommandBuffer& other) = delete;
+    CommandBuffer(CommandBuffer&& other) noexcept; 
+    CommandBuffer& operator=(CommandBuffer&& other) noexcept; 
+    
     explicit CommandBuffer(const VkCommandPool& commandPool);
     [[nodiscard]] const VkCommandBuffer& GetVkCommandBuffer() const;
     void SetVkCommandBuffer(VkCommandBuffer buffer);

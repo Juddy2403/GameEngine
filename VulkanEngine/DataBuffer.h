@@ -1,26 +1,23 @@
 #pragma once
 #include <vulkan/vulkan_core.h>
-#include <stdexcept>
 
 class DataBuffer {
 public:
     DataBuffer(VkBufferUsageFlags usage, VkMemoryPropertyFlags properties);
-
-    ~DataBuffer() = default;
+    ~DataBuffer() = default; 
+    DataBuffer(const DataBuffer& other) = delete;
+    DataBuffer& operator=(const DataBuffer& other) = delete;
+    DataBuffer(DataBuffer&& other) noexcept = delete; 
+    DataBuffer& operator=(DataBuffer&& other) noexcept = delete; 
 
     void Upload(const VkCommandPool& commandPool, const VkQueue& graphicsQueue);
-
-    void Map(VkDeviceSize size, void* data);
-
-    void Destroy();
+    void Map(VkDeviceSize size, const void* data);
+    void Destroy() const;
 
     //Used for the draw function inside Mesh3D
-    void BindAsVertexBuffer(VkCommandBuffer commandBuffer);
-
-    void BindAsIndexBuffer(VkCommandBuffer commandBuffer);
-
-    [[nodiscard]] VkBuffer GetVkBuffer() { return m_VkBuffer; }
-
+    void BindAsVertexBuffer(VkCommandBuffer commandBuffer) const;
+    void BindAsIndexBuffer(VkCommandBuffer commandBuffer) const;
+    [[nodiscard]] VkBuffer GetVkBuffer() const { return m_VkBuffer; }
     //[[nodiscard]] VkDeviceSize GetSizeInBytes() const { return m_Size; }
 
     static void CreateBuffer(VkDeviceSize size, VkBufferUsageFlags usage, VkMemoryPropertyFlags properties, VkBuffer& buffer, VkDeviceMemory& bufferMemory);

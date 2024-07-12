@@ -1,22 +1,25 @@
 #include "DataBuffer.h"
 #include <vulkanbase/VulkanBase.h>
 
-DataBuffer::DataBuffer(VkBufferUsageFlags usage, VkMemoryPropertyFlags properties):
-    m_Usage{usage},
-    m_Properties{properties}
-    {}
+DataBuffer::DataBuffer(const VkBufferUsageFlags usage, const VkMemoryPropertyFlags properties):
+    m_Usage{ usage },
+    m_Properties{ properties }
+{}
 
-void DataBuffer::BindAsVertexBuffer(VkCommandBuffer commandBuffer) {
-    VkBuffer vertexBuffers[] = {m_VkBuffer};
-    VkDeviceSize offsets[] = {0};
+void DataBuffer::BindAsVertexBuffer(const VkCommandBuffer commandBuffer) const
+{
+    const VkBuffer vertexBuffers[] = { m_VkBuffer };
+    constexpr VkDeviceSize offsets[] = { 0 };
     vkCmdBindVertexBuffers(commandBuffer, 0, 1, vertexBuffers, offsets);
 }
 
-void DataBuffer::BindAsIndexBuffer(VkCommandBuffer commandBuffer) {
+void DataBuffer::BindAsIndexBuffer(const VkCommandBuffer commandBuffer) const
+{
     vkCmdBindIndexBuffer(commandBuffer, m_VkBuffer, 0, VK_INDEX_TYPE_UINT32);
 }
 
-void DataBuffer::Map(VkDeviceSize size, void *data) {
+void DataBuffer::Map(const VkDeviceSize size, const void* data)
+{
     m_Size = size;
     CreateBuffer(size, VK_BUFFER_USAGE_TRANSFER_SRC_BIT, m_Properties, m_StagingBuffer, m_StagingBufferMemory);
 
@@ -29,7 +32,8 @@ void DataBuffer::Map(VkDeviceSize size, void *data) {
     m_HasBeenMapped = true;
 }
 
-void DataBuffer::Upload(VkCommandPool const &commandPool, VkQueue const &graphicsQueue) {
+void DataBuffer::Upload(VkCommandPool const& commandPool, VkQueue const& graphicsQueue)
+{
     if (!m_HasBeenMapped)
         throw std::runtime_error("DataBuffer::Upload: DataBuffer has not been mapped");
 
@@ -40,37 +44,31 @@ void DataBuffer::Upload(VkCommandPool const &commandPool, VkQueue const &graphic
     m_HasBeenMapped = false;
 }
 
-void DataBuffer::Destroy() {
+void DataBuffer::Destroy() const
+{
     vkDestroyBuffer(VulkanBase::device, m_VkBuffer, nullptr);
     vkFreeMemory(VulkanBase::device, m_VkBufferMemory, nullptr);
-
-//    vkDestroyBuffer(VulkanBase::device, m_StagingBuffer, nullptr);
-//    vkFreeMemory(VulkanBase::device, m_StagingBufferMemory, nullptr);
 }
 
-uint32_t DataBuffer::FindMemoryType(uint32_t typeFilter, VkMemoryPropertyFlags properties) {
+uint32_t DataBuffer::FindMemoryType(const uint32_t typeFilter, const VkMemoryPropertyFlags properties)
+{
     VkPhysicalDeviceMemoryProperties memProperties;
     vkGetPhysicalDeviceMemoryProperties(VulkanBase::physicalDevice, &memProperties);
 
-    for (uint32_t i = 0; i < memProperties.memoryTypeCount; i++) {
-        if ((typeFilter & (1 << i)) && (memProperties.memoryTypes[i].propertyFlags & properties) == properties) {
-            return i;
-        }
-    }
+    for (uint32_t i = 0; i < memProperties.memoryTypeCount; i++) if ((typeFilter & (1 << i)) && (memProperties.memoryTypes[i].propertyFlags & properties) == properties) return i;
 
     throw std::runtime_error("failed to find suitable memory type!");
 }
 
-void DataBuffer::CreateBuffer(VkDeviceSize size, VkBufferUsageFlags usage, VkMemoryPropertyFlags properties, VkBuffer& buffer, VkDeviceMemory& bufferMemory) {
+void DataBuffer::CreateBuffer(const VkDeviceSize size, const VkBufferUsageFlags usage, const VkMemoryPropertyFlags properties, VkBuffer& buffer, VkDeviceMemory& bufferMemory)
+{
     VkBufferCreateInfo bufferInfo{};
     bufferInfo.sType = VK_STRUCTURE_TYPE_BUFFER_CREATE_INFO;
     bufferInfo.size = size;
     bufferInfo.usage = usage;
     bufferInfo.sharingMode = VK_SHARING_MODE_EXCLUSIVE;
 
-    if (vkCreateBuffer(VulkanBase::device, &bufferInfo, nullptr, &buffer) != VK_SUCCESS) {
-        throw std::runtime_error("failed to create buffer!");
-    }
+    if (vkCreateBuffer(VulkanBase::device, &bufferInfo, nullptr, &buffer) != VK_SUCCESS) throw std::runtime_error("failed to create buffer!");
 
     VkMemoryRequirements memRequirements;
     vkGetBufferMemoryRequirements(VulkanBase::device, buffer, &memRequirements);
@@ -80,36 +78,26 @@ void DataBuffer::CreateBuffer(VkDeviceSize size, VkBufferUsageFlags usage, VkMem
     allocInfo.allocationSize = memRequirements.size;
     allocInfo.memoryTypeIndex = FindMemoryType(memRequirements.memoryTypeBits, properties);
 
-    if (vkAllocateMemory(VulkanBase::device, &allocInfo, nullptr, &bufferMemory) != VK_SUCCESS) {
-        throw std::runtime_error("failed to allocate buffer memory!");
-    }
+    if (vkAllocateMemory(VulkanBase::device, &allocInfo, nullptr, &bufferMemory) != VK_SUCCESS) throw std::runtime_error("failed to allocate buffer memory!");
 
-    vkBindBufferMemory(VulkanBase::device, buffer, bufferMemory, 0); //0 is the offset in memory. If its not 0 it needs to be divisible by memRequirements.alignment
+    vkBindBufferMemory(VulkanBase::device, buffer, bufferMemory, 0); //0 is the offset in memory. If it's not 0 it needs to be divisible by memRequirements.alignment
 }
 
-void DataBuffer::CopyBuffer(VkCommandPool const &commandPool, VkQueue const &graphicsQueue, VkBuffer srcBuffer,
-                            VkBuffer dstBuffer, VkDeviceSize size) {
-    CommandBuffer commandBufferClass{ commandPool };
-
+void DataBuffer::CopyBuffer(VkCommandPool const& commandPool, VkQueue const& graphicsQueue, const VkBuffer srcBuffer,
+    const VkBuffer dstBuffer, const VkDeviceSize size)
+{
     //TODO: create a separate command pool for short lived objects using the VK_COMMAND_POOL_CREATE_TRANSIENT_BIT flag
-
+    const CommandBuffer commandBufferClass{ commandPool };
     commandBufferClass.BeginRecording(VK_COMMAND_BUFFER_USAGE_ONE_TIME_SUBMIT_BIT);
 
-    VkBufferCopy copyRegion{};
+    VkBufferCopy copyRegion;
     copyRegion.srcOffset = 0; // Optional
     copyRegion.dstOffset = 0; // Optional
     copyRegion.size = size;
+
     vkCmdCopyBuffer(commandBufferClass.GetVkCommandBuffer(), srcBuffer, dstBuffer, 1, &copyRegion);
-
     commandBufferClass.EndRecording();
-
     commandBufferClass.Submit();
     vkQueueWaitIdle(graphicsQueue);
-
     commandBufferClass.FreeCommandBuffer(commandPool);
-
 }
-
-
-
-

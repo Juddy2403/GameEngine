@@ -5,17 +5,23 @@
 
 class RenderPass
 {
-private:
-	VkRenderPass m_RenderPass;
-    static DepthBuffer m_DepthBuffer;
-	std::vector<VkFramebuffer> m_SwapChainFramebuffers;
-
 public:
+    RenderPass() = default;
+    ~RenderPass() = default;
+    RenderPass(const RenderPass& other) = delete;
+    RenderPass& operator=(const RenderPass& other) = delete;
+    RenderPass(RenderPass&& other) noexcept = delete;
+    RenderPass& operator=(RenderPass&& other) noexcept = delete;
+    
     static DepthBuffer& GetDepthBuffer() { return m_DepthBuffer; }
-	void CreateFrameBuffers(const std::vector<VkImageView>& swapChainImageViews,
-                            const VkExtent2D& swapChainExtent);
-	void CreateRenderPass(const VkFormat& swapChainImageFormat);
-	void DestroyRenderPass();
-	VkRenderPass& GetRenderPass() { return m_RenderPass; }
-	std::vector<VkFramebuffer>& GetSwapChainFramebuffers() { return m_SwapChainFramebuffers; }
+    VkRenderPass& GetRenderPass() { return m_RenderPass; }
+    std::vector<VkFramebuffer>& GetSwapChainFramebuffers() { return m_SwapChainFramebuffers; }
+
+    void CreateFrameBuffers(const std::vector<VkImageView>& swapChainImageViews, const VkExtent2D& swapChainExtent);
+    void CreateRenderPass(const VkFormat& swapChainImageFormat);
+    void DestroyRenderPass() const;
+private:
+    VkRenderPass m_RenderPass = VK_NULL_HANDLE;
+    static DepthBuffer m_DepthBuffer;
+    std::vector<VkFramebuffer> m_SwapChainFramebuffers;
 };

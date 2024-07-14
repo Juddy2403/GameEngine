@@ -1,16 +1,20 @@
 #include "Shader.h"
-#include <vulkanbase/VulkanUtil.h>
 #include <vulkanbase/VulkanBase.h>
 
 VkDescriptorSetLayout Shader::m_DescriptorSetLayout;
 
-void Shader::Initialize() {
+Shader::Shader(std::string vertexShaderFile, std::string fragmentShaderFile): m_VertexShaderFile{ std::move(vertexShaderFile) },
+                                                                              m_FragmentShaderFile{ std::move(fragmentShaderFile) } {}
+void Shader::Initialize()
+{
     m_ShaderStages.push_back(CreateVertexShaderInfo());
     m_ShaderStages.push_back(CreateFragmentShaderInfo());
 }
 
-void Shader::DestroyShaderModules() {
-    for (VkPipelineShaderStageCreateInfo &stageInfo: m_ShaderStages) {
+void Shader::DestroyShaderModules()
+{
+    for (const VkPipelineShaderStageCreateInfo& stageInfo : m_ShaderStages)
+    {
         vkDestroyShaderModule(VulkanBase::device, stageInfo.module, nullptr);
     }
     m_ShaderStages.clear();
@@ -18,8 +22,8 @@ void Shader::DestroyShaderModules() {
 
 VkPipelineShaderStageCreateInfo Shader::CreateFragmentShaderInfo() const
 {
-    std::vector<char> fragShaderCode = readFile(m_FragmentShaderFile);
-    VkShaderModule fragShaderModule = CreateShaderModule(fragShaderCode);
+    const std::vector<char> fragShaderCode = readFile(m_FragmentShaderFile);
+    const VkShaderModule fragShaderModule = CreateShaderModule(fragShaderCode);
 
     VkPipelineShaderStageCreateInfo fragShaderStageInfo{};
     fragShaderStageInfo.sType = VK_STRUCTURE_TYPE_PIPELINE_SHADER_STAGE_CREATE_INFO;
@@ -32,8 +36,8 @@ VkPipelineShaderStageCreateInfo Shader::CreateFragmentShaderInfo() const
 
 VkPipelineShaderStageCreateInfo Shader::CreateVertexShaderInfo() const
 {
-    std::vector<char> vertShaderCode = readFile(m_VertexShaderFile);
-    VkShaderModule vertShaderModule = CreateShaderModule(vertShaderCode);
+    const std::vector<char> vertShaderCode = readFile(m_VertexShaderFile);
+    const VkShaderModule vertShaderModule = CreateShaderModule(vertShaderCode);
 
     VkPipelineShaderStageCreateInfo vertShaderStageInfo{};
     vertShaderStageInfo.sType = VK_STRUCTURE_TYPE_PIPELINE_SHADER_STAGE_CREATE_INFO;
@@ -43,7 +47,8 @@ VkPipelineShaderStageCreateInfo Shader::CreateVertexShaderInfo() const
     return vertShaderStageInfo;
 }
 
-VkPipelineInputAssemblyStateCreateInfo Shader::CreateInputAssemblyStateInfo() {
+VkPipelineInputAssemblyStateCreateInfo Shader::CreateInputAssemblyStateInfo()
+{
     VkPipelineInputAssemblyStateCreateInfo inputAssembly{};
     inputAssembly.sType = VK_STRUCTURE_TYPE_PIPELINE_INPUT_ASSEMBLY_STATE_CREATE_INFO;
     inputAssembly.topology = VK_PRIMITIVE_TOPOLOGY_TRIANGLE_LIST;
@@ -51,21 +56,21 @@ VkPipelineInputAssemblyStateCreateInfo Shader::CreateInputAssemblyStateInfo() {
     return inputAssembly;
 }
 
-VkShaderModule Shader::CreateShaderModule(const std::vector<char> &code) {
+VkShaderModule Shader::CreateShaderModule(const std::vector<char>& code)
+{
     VkShaderModuleCreateInfo createInfo{};
     createInfo.sType = VK_STRUCTURE_TYPE_SHADER_MODULE_CREATE_INFO;
     createInfo.codeSize = code.size();
-    createInfo.pCode = reinterpret_cast<const uint32_t *>(code.data());
+    createInfo.pCode = reinterpret_cast<const uint32_t*>(code.data());
 
     VkShaderModule shaderModule;
-    if (vkCreateShaderModule(VulkanBase::device, &createInfo, nullptr, &shaderModule) != VK_SUCCESS) {
-        throw std::runtime_error("failed to create shader module!");
-    }
+    if (vkCreateShaderModule(VulkanBase::device, &createInfo, nullptr, &shaderModule) != VK_SUCCESS) throw std::runtime_error("failed to create shader module!");
 
     return shaderModule;
 }
 
-void Shader::CreateDescriptor() {
+void Shader::CreateDescriptor()
+{
     VkDescriptorSetLayoutBinding uboLayoutBinding;
     uboLayoutBinding.binding = 0;
     uboLayoutBinding.descriptorType = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER;
@@ -101,18 +106,19 @@ void Shader::CreateDescriptor() {
     specularSamplerLayoutBinding.pImmutableSamplers = nullptr;
     specularSamplerLayoutBinding.stageFlags = VK_SHADER_STAGE_FRAGMENT_BIT;
 
-    std::array<VkDescriptorSetLayoutBinding, 5> bindings = {uboLayoutBinding, samplerLayoutBinding, normalSamplerLayoutBinding, glossSamplerLayoutBinding, specularSamplerLayoutBinding};
+    const std::array bindings = { uboLayoutBinding,samplerLayoutBinding,normalSamplerLayoutBinding,glossSamplerLayoutBinding,specularSamplerLayoutBinding };
     VkDescriptorSetLayoutCreateInfo layoutInfo{};
     layoutInfo.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_SET_LAYOUT_CREATE_INFO;
     layoutInfo.bindingCount = static_cast<uint32_t>(bindings.size());
     layoutInfo.pBindings = bindings.data();
 
-    if (vkCreateDescriptorSetLayout(VulkanBase::device, &layoutInfo, nullptr, &m_DescriptorSetLayout) != VK_SUCCESS) {
+    if (vkCreateDescriptorSetLayout(VulkanBase::device, &layoutInfo, nullptr, &m_DescriptorSetLayout) != VK_SUCCESS)
+    {
         throw std::runtime_error("failed to create descriptor set layout!");
     }
 }
 
-void Shader::DestroyDescriptorSetLayout() {
+void Shader::DestroyDescriptorSetLayout()
+{
     vkDestroyDescriptorSetLayout(VulkanBase::device, m_DescriptorSetLayout, nullptr);
 }
-

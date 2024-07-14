@@ -5,9 +5,8 @@
 
 VkPipelineLayout GraphicsPipeline::m_PipelineLayout;
 
-void GraphicsPipeline::CreateGraphicsPipeline(const VkRenderPass &renderPass, Shader &gradientShader,
-                                              VkPipelineVertexInputStateCreateInfo pipelineVerInputStateCreateInfo,
-                                              bool enableDepthBuffering) {
+void GraphicsPipeline::CreateGraphicsPipeline(const VkRenderPass& renderPass, Shader& gradientShader, VkPipelineVertexInputStateCreateInfo pipelineVerInputStateCreateInfo, bool enableDepthBuffering)
+{
     VkPipelineViewportStateCreateInfo viewportState{};
     viewportState.sType = VK_STRUCTURE_TYPE_PIPELINE_VIEWPORT_STATE_CREATE_INFO;
     viewportState.viewportCount = 1;
@@ -30,7 +29,7 @@ void GraphicsPipeline::CreateGraphicsPipeline(const VkRenderPass &renderPass, Sh
 
     VkPipelineColorBlendAttachmentState colorBlendAttachment{};
     colorBlendAttachment.colorWriteMask =
-            VK_COLOR_COMPONENT_R_BIT | VK_COLOR_COMPONENT_G_BIT | VK_COLOR_COMPONENT_B_BIT | VK_COLOR_COMPONENT_A_BIT;
+    VK_COLOR_COMPONENT_R_BIT | VK_COLOR_COMPONENT_G_BIT | VK_COLOR_COMPONENT_B_BIT | VK_COLOR_COMPONENT_A_BIT;
     colorBlendAttachment.blendEnable = VK_FALSE;
 
     VkPipelineColorBlendStateCreateInfo colorBlending{};
@@ -44,17 +43,15 @@ void GraphicsPipeline::CreateGraphicsPipeline(const VkRenderPass &renderPass, Sh
     colorBlending.blendConstants[2] = 0.0f;
     colorBlending.blendConstants[3] = 0.0f;
 
-    std::vector<VkDynamicState> dynamicStates = {
-            VK_DYNAMIC_STATE_VIEWPORT,
-            VK_DYNAMIC_STATE_SCISSOR
-    };
+    std::vector dynamicStates = { VK_DYNAMIC_STATE_VIEWPORT,VK_DYNAMIC_STATE_SCISSOR };
     VkPipelineDynamicStateCreateInfo dynamicState{};
     dynamicState.sType = VK_STRUCTURE_TYPE_PIPELINE_DYNAMIC_STATE_CREATE_INFO;
     dynamicState.dynamicStateCount = static_cast<uint32_t>(dynamicStates.size());
     dynamicState.pDynamicStates = dynamicStates.data();
 
     VkPipelineDepthStencilStateCreateInfo depthStencil{};
-    if(enableDepthBuffering) {
+    if (enableDepthBuffering)
+    {
         depthStencil.sType = VK_STRUCTURE_TYPE_PIPELINE_DEPTH_STENCIL_STATE_CREATE_INFO;
         depthStencil.depthTestEnable = VK_TRUE;
         depthStencil.depthWriteEnable = VK_TRUE;
@@ -65,7 +62,9 @@ void GraphicsPipeline::CreateGraphicsPipeline(const VkRenderPass &renderPass, Sh
         depthStencil.stencilTestEnable = VK_FALSE;
         depthStencil.front = {}; // Optional
         depthStencil.back = {}; // Optional
-        } else {
+    }
+    else
+    {
         depthStencil.sType = VK_STRUCTURE_TYPE_PIPELINE_DEPTH_STENCIL_STATE_CREATE_INFO;
         depthStencil.depthTestEnable = VK_FALSE; // Disable depth testing
         depthStencil.depthWriteEnable = VK_FALSE; // Also disable depth writing if you don't need it
@@ -95,19 +94,19 @@ void GraphicsPipeline::CreateGraphicsPipeline(const VkRenderPass &renderPass, Sh
     pipelineInfo.basePipelineHandle = VK_NULL_HANDLE;
     pipelineInfo.pDepthStencilState = &depthStencil;
 
-    if (vkCreateGraphicsPipelines(VulkanBase::device, VK_NULL_HANDLE, 1, &pipelineInfo, nullptr, &m_GraphicsPipeline) !=
-        VK_SUCCESS) {
+    if (vkCreateGraphicsPipelines(VulkanBase::device, VK_NULL_HANDLE, 1, &pipelineInfo, nullptr, &m_GraphicsPipeline) != VK_SUCCESS)
+    {
         throw std::runtime_error("failed to create graphics pipeline!");
     }
     gradientShader.DestroyShaderModules();
-
 }
 
-void GraphicsPipeline::CreatePipelineLayout() {
-    VkPushConstantRange pushConstantRange{};
+void GraphicsPipeline::CreatePipelineLayout()
+{
+    VkPushConstantRange pushConstantRange;
     pushConstantRange.stageFlags = VK_SHADER_STAGE_FRAGMENT_BIT; // The stage where the push constant will be accessible
     pushConstantRange.offset = 0; // Starting offset
-    pushConstantRange.size = sizeof(glm::vec3)+ sizeof(int)*3; // Size of the push constant
+    pushConstantRange.size = sizeof(glm::vec3) + sizeof(int) * 3; // Size of the push constant
 
     VkPipelineLayoutCreateInfo pipelineLayoutInfo{};
     pipelineLayoutInfo.sType = VK_STRUCTURE_TYPE_PIPELINE_LAYOUT_CREATE_INFO;
@@ -116,14 +115,15 @@ void GraphicsPipeline::CreatePipelineLayout() {
     pipelineLayoutInfo.pushConstantRangeCount = 1; // Number of push constant ranges
     pipelineLayoutInfo.pPushConstantRanges = &pushConstantRange; // Array of push constant ranges
 
-    if (vkCreatePipelineLayout(VulkanBase::device, &pipelineLayoutInfo, nullptr, &m_PipelineLayout) != VK_SUCCESS) {
-        throw std::runtime_error("failed to create pipeline layout!");
-    }
+    if (vkCreatePipelineLayout(VulkanBase::device, &pipelineLayoutInfo, nullptr, &m_PipelineLayout) != VK_SUCCESS) throw std::runtime_error("failed to create pipeline layout!");
 }
 
-void GraphicsPipeline::DestroyGraphicsPipeline() {
+void GraphicsPipeline::DestroyGraphicsPipeline() const
+{
     vkDestroyPipeline(VulkanBase::device, m_GraphicsPipeline, nullptr);
-
 }
 
-void GraphicsPipeline::DestroyGraphicsPipelineLayout() { vkDestroyPipelineLayout(VulkanBase::device, m_PipelineLayout, nullptr); }
+void GraphicsPipeline::DestroyGraphicsPipelineLayout()
+{
+    vkDestroyPipelineLayout(VulkanBase::device, m_PipelineLayout, nullptr);
+}

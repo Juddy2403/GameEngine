@@ -6,32 +6,29 @@
 #include "texture/ImageView.h"
 
 struct SwapChainSupportDetails {
-    VkSurfaceCapabilitiesKHR m_Capabilities;
-    std::vector<VkSurfaceFormatKHR> m_Formats;
-    std::vector<VkPresentModeKHR> m_PresentModes;
+    VkSurfaceCapabilitiesKHR capabilities;
+    std::vector<VkSurfaceFormatKHR> formats;
+    std::vector<VkPresentModeKHR> presentModes;
 };
 
 class SwapChain final {
+private:
+    VkSwapchainKHR m_SwapChain;
+    ImageView m_ImageView;
+
+    VkPresentModeKHR ChooseSwapPresentMode(const std::vector<VkPresentModeKHR> &availablePresentModes);
+
+    VkExtent2D ChooseSwapExtent(const VkSurfaceCapabilitiesKHR &capabilities, GLFWwindow *window);
+
+    VkSurfaceFormatKHR ChooseSwapSurfaceFormat(const std::vector<VkSurfaceFormatKHR> &availableFormats);
+
 public:
-    SwapChain() = default;
-    ~SwapChain() = default;
-    SwapChain(const SwapChain &other) = delete;
-    SwapChain &operator=(const SwapChain &other) = delete;
-    SwapChain(SwapChain &&other) noexcept = delete;
-    SwapChain &operator=(SwapChain &&other) noexcept = delete;
-    
-    static SwapChainSupportDetails QuerySwapChainSupport(const VkSurfaceKHR &surface);
+    SwapChainSupportDetails QuerySwapChainSupport(const VkSurfaceKHR &surface);
     void CreateSwapChain(const VkSurfaceKHR &surface, GLFWwindow *window, const QueueFamilyIndices &indices);
     VkSwapchainKHR &GetSwapChain() { return m_SwapChain; }
     ImageView &GetImageView() { return m_ImageView; }
-    void DestroySwapChain() const;
-private:
-    VkSwapchainKHR m_SwapChain = VK_NULL_HANDLE;
-    ImageView m_ImageView = ImageView();
+    void DestroySwapChain();
 
-    static VkPresentModeKHR ChooseSwapPresentMode(const std::vector<VkPresentModeKHR> &availablePresentModes);
-    VkExtent2D ChooseSwapExtent(const VkSurfaceCapabilitiesKHR &capabilities, GLFWwindow *window);
-    static VkSurfaceFormatKHR ChooseSwapSurfaceFormat(const std::vector<VkSurfaceFormatKHR> &availableFormats);
 };
 
 

@@ -1,14 +1,9 @@
 #pragma once
-#include <memory>
-#include <vector>
-#include <glm/mat4x4.hpp>
-
-#include "meshes/2DMesh.h"
 #include "meshes/3DMesh.h"
-#include "meshes/Vertex.h"
+#include "meshes/2DMesh.h"
+#include <memory>
 
-
-class DescriptorPool;
+class Mesh3D;
 class Level
 {
 public:

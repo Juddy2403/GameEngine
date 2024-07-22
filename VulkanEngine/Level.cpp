@@ -1,5 +1,6 @@
 #include "Level.h"
 #include "vulkanbase/VulkanBase.h"
+#include "meshes/MeshLoader.h"
 #include "LevelParser.h"
 #include "texture/TextureManager.h"
 

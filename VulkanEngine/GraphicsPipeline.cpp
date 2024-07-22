@@ -1,6 +1,5 @@
 #include "GraphicsPipeline.h"
-#include "meshes/3DMesh.h"
-#include <Shader.h>
+#include "Shader.h"
 #include <vulkanbase/VulkanBase.h>
 
 VkPipelineLayout GraphicsPipeline::m_PipelineLayout;

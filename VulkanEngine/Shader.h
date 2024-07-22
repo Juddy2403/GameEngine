@@ -1,10 +1,8 @@
 #pragma once
 #include <vulkan/vulkan_core.h>
-#include <utility>
 #include <vector>
 #include <string>
 #include "meshes/Vertex.h"
-#include <memory>
 
 class Shader
 {

@@ -1,6 +1,8 @@
 #include "DescriptorPool.h"
 #include <vulkanbase/VulkanBase.h>
 
+#include "DataBuffer.h"
+
 const std::vector<VkDescriptorSet>& DescriptorPool::GetDescriptorSets() const
 {
     return m_DescriptorSets;

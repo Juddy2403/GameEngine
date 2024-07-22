@@ -5,8 +5,9 @@
 #include <unordered_map>
 #include <glm/glm.hpp>
 
-class DataBuffer;
-struct Vertex2D;
+#include "DataBuffer.h"
+#include "Vertex.h"
+
 class Mesh2D {
 public:
     Mesh2D();

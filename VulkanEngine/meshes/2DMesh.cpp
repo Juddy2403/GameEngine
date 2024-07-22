@@ -1,6 +1,5 @@
 #include "2DMesh.h"
 #include "vulkanbase/VulkanBase.h"
-#include "Vertex.h"
 
 Mesh2D::Mesh2D()
 {

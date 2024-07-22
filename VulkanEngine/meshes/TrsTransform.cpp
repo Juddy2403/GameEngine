@@ -1,16 +1,13 @@
-#include "Transform.h"
-#include <glm/ext/matrix_transform.hpp>
 #include "Camera.h"
+#include "TrsTransform.h"
 #include "TimeManager.h"
-#define GLM_FORCE_RADIANS
-#define GLM_FORCE_DEPTH_ZERO_TO_ONE
 
-void Transform::Translate(const glm::vec3 &translation) {
+void TrsTransform::Translate(const glm::vec3 &translation) {
     m_TranslationMatrix = glm::translate(m_TranslationMatrix, translation);
     m_NeedsUpdate = true;
 }
 
-void Transform::Rotate(const glm::vec3 &rotation) {
+void TrsTransform::Rotate(const glm::vec3 &rotation) {
     m_RotationMatrix = glm::rotate(m_RotationMatrix, glm::radians(rotation.x), Camera::right);
     m_RotationMatrix = glm::rotate(m_RotationMatrix, glm::radians(rotation.y), Camera::up);
     m_RotationMatrix = glm::rotate(m_RotationMatrix, glm::radians(rotation.z), Camera::forward);
@@ -18,13 +15,13 @@ void Transform::Rotate(const glm::vec3 &rotation) {
     m_NeedsUpdate = true;
 }
 
-void Transform::Scale(const glm::vec3 &scale) {
+void TrsTransform::Scale(const glm::vec3 &scale) {
     m_ScaleMatrix = glm::scale(m_ScaleMatrix, scale);
 
     m_NeedsUpdate = true;
 }
 
-glm::mat4 Transform::GetWorldMatrix() {
+glm::mat4 TrsTransform::GetWorldMatrix() {
     if(m_NeedsUpdate) {
         m_WorldMatrix = m_TranslationMatrix * m_RotationMatrix * m_ScaleMatrix;
         m_NeedsUpdate = false;
@@ -32,12 +29,12 @@ glm::mat4 Transform::GetWorldMatrix() {
     return m_WorldMatrix;
 }
 
-void Transform::Update() {
+void TrsTransform::Update() {
     if(m_RotationPerSecond != glm::vec3(0.f)) {
         Rotate(m_RotationPerSecond* TimeManager::GetInstance().GetElapsed());
     }
 }
 
-void Transform::SetRotationPerSecond(const glm::vec3 &rotationPerSecond) {
+void TrsTransform::SetRotationPerSecond(const glm::vec3 &rotationPerSecond) {
     m_RotationPerSecond = rotationPerSecond;
 }

@@ -7,7 +7,6 @@
 #include "meshes/3DMesh.h"
 #include "meshes/Vertex.h"
 
-
 class DescriptorPool;
 class Level
 {

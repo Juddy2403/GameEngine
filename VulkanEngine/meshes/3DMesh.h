@@ -1,10 +1,26 @@
+// #pragma once
+// #include <vulkan/vulkan_core.h>
+// #include <vector>
+// #include <unordered_map>
+// #include <memory>
+// #include "DescriptorPool.h"
+// #include "TrsTransform.h"
+// #include "texture/TextureLoader.h"
+
 #pragma once
 #include <vulkan/vulkan_core.h>
 #include <vector>
+#include <string>
 #include <unordered_map>
 #include <memory>
+#include <glm/glm.hpp>
+
 #include "DescriptorPool.h"
-#include "Transform.h"
+#include "DataBuffer.h"
+#include "Vertex.h"
+#include "texture/Texture.h"
+
+#include "TrsTransform.h"
 #include "texture/TextureLoader.h"
 
 struct UniformBufferObject;
@@ -21,7 +37,7 @@ public:
     Mesh3D& operator=(Mesh3D&& other) = delete;
     ~Mesh3D() = default;
 
-    Transform& GetTransform() { return m_Transform; }
+    TrsTransform& GetTransform() { return m_Transform; }
     TextureLoader& GetTextureLoader() { return m_TextureManager; }
     void SetPBRMaterial() { m_DoesHavePBRMaterial = 1; }
     void AddVertex(const Vertex3D& vertex);
@@ -40,7 +56,7 @@ private:
     std::unordered_map<Vertex3D, uint32_t> m_UniqueVertices{};
     std::vector<Vertex3D> m_Vertices = {};
     std::vector<uint32_t> m_Indices = {};
-    Transform m_Transform;
+    TrsTransform m_Transform;
     TextureLoader m_TextureManager;
 
     DescriptorPool m_DescriptorPool;

@@ -1,18 +1,14 @@
+#pragma once
 #include "Texture.h"
-#include "DescriptorPool.h"
 
+class DescriptorPool;
 class TextureLoader
 {
 public:
     static Texture m_DefaultTexture;
     int m_HasNormalMap = 0;
 
-    explicit TextureLoader(DescriptorPool& descriptorPool) : m_DescriptorPool(descriptorPool) {
-        m_DescriptorPool.SetAlbedoImageView(m_DefaultTexture.GetTextureImageView());
-        m_DescriptorPool.SetNormalImageView(m_DefaultTexture.GetTextureImageView());
-        m_DescriptorPool.SetGlossImageView(m_DefaultTexture.GetTextureImageView());
-        m_DescriptorPool.SetSpecularImageView(m_DefaultTexture.GetTextureImageView());
-    }
+    explicit TextureLoader(DescriptorPool& descriptorPool);
     static void LoadDefaultTexture(VkCommandPool const &commandPool, const std::string &path);
     void UploadAlbedoTexture(VkCommandPool const &commandPool, const std::string &path);
     void UploadNormalTexture(VkCommandPool const &commandPool, const std::string &path);

@@ -1,5 +1,7 @@
 #pragma once
+#include <glm/glm.hpp>
 #include <tiny_obj_loader.h>
+
 #include "Vertex.h"
 
 class Mesh3D;

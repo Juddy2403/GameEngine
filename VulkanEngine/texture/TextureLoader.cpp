@@ -1,7 +1,15 @@
 #include "TextureLoader.h"
+
+#include "DescriptorPool.h"
 #include "TextureManager.h"
 
 Texture TextureLoader::m_DefaultTexture;
+TextureLoader::TextureLoader(DescriptorPool& descriptorPool): m_DescriptorPool(descriptorPool) {
+    m_DescriptorPool.SetAlbedoImageView(m_DefaultTexture.GetTextureImageView());
+    m_DescriptorPool.SetNormalImageView(m_DefaultTexture.GetTextureImageView());
+    m_DescriptorPool.SetGlossImageView(m_DefaultTexture.GetTextureImageView());
+    m_DescriptorPool.SetSpecularImageView(m_DefaultTexture.GetTextureImageView());
+}
 void TextureLoader::LoadDefaultTexture(VkCommandPool const &commandPool, const std::string &path) {
     m_DefaultTexture = TextureManager::GetInstance().LoadTexture(commandPool,path);
 }

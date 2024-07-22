@@ -167,7 +167,7 @@
     <ClCompile Include="meshes\2DMesh.cpp" />
     <ClCompile Include="meshes\3DMesh.cpp" />
     <ClCompile Include="meshes\MeshLoader.cpp" />
-    <ClCompile Include="meshes\Transform.cpp" />
+    <ClCompile Include="meshes\TrsTransform.cpp" />
     <ClCompile Include="RenderPass.cpp" />
     <ClCompile Include="Shader.cpp" />
     <ClCompile Include="SwapChain.cpp" />
@@ -191,7 +191,7 @@
     <ClInclude Include="meshes\2DMesh.h" />
     <ClInclude Include="meshes\3DMesh.h" />
     <ClInclude Include="meshes\MeshLoader.h" />
-    <ClInclude Include="meshes\Transform.h" />
+    <ClInclude Include="meshes\TrsTransform.h" />
     <ClInclude Include="meshes\Vertex.h" />
     <ClInclude Include="RenderPass.h" />
     <ClInclude Include="Shader.h" />

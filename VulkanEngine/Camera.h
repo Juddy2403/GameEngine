@@ -1,10 +1,7 @@
 #pragma once
+#include <glm/gtc/matrix_transform.hpp>
 #define GLM_FORCE_RADIANS
 #define GLM_FORCE_DEPTH_ZERO_TO_ONE
-#include <glm/glm.hpp>
-#include <glm/vec3.hpp>
-#include <glm/mat4x4.hpp>
-#include <glm/gtc/matrix_transform.hpp>
 
 constexpr float g_Near = 0.1f;
 constexpr float g_Far = 1000.f;

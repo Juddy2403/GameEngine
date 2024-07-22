@@ -1,7 +1,7 @@
 #pragma once
-#include <glm/glm.hpp>
+#include <glm/mat4x4.hpp>
 
-class Transform
+class TrsTransform
 {
 private:
     glm::mat4 m_WorldMatrix{glm::mat4(1)};

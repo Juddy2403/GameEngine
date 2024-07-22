@@ -1,4 +1,5 @@
-#include <glm/ext/matrix_float4x4.hpp>
+#pragma once
+#include <glm/glm.hpp>
 
 class Transform
 {

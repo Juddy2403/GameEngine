@@ -1,9 +1,6 @@
 #pragma once
-#include <string>
-#include <glm/detail/type_vec3.hpp>
-#include <glm/vec3.hpp>
+#include <tiny_obj_loader.h>
 #include "Vertex.h"
-#include "tiny_obj_loader.h"
 
 class Mesh3D;
 class Mesh2D;
@@ -13,7 +10,6 @@ private:
     [[nodiscard]] static Vertex3D GetVertexByIndex(const tinyobj::attrib_t &attrib, const tinyobj::index_t &index);
     static void AddRectPlane(Mesh3D &mesh, Vertex3D &bottomLeft, Vertex3D &topLeft, Vertex3D &topRight,
                              Vertex3D &bottomRight, bool isClockWise, bool keepNormals = false);
-
     static void AddRect(Mesh2D &mesh,float top, float left, float bottom, float right);
 public:
     //3D Mesh

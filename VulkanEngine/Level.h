@@ -1,7 +1,7 @@
 #pragma once
 #include <memory>
 #include <vector>
-#include <glm/mat4x4.hpp>
+#include <glm/glm.hpp>
 
 #include "meshes/2DMesh.h"
 #include "meshes/3DMesh.h"

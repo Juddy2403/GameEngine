@@ -9,10 +9,7 @@ void RenderPass::CreateFrameBuffers(const std::vector<VkImageView>& swapChainIma
 
     for (size_t i = 0; i < swapChainImageViews.size(); i++)
     {
-        std::array attachments = {
-            swapChainImageViews[i],
-            m_DepthBuffer.GetDepthImageView()
-        };
+        std::array attachments = { swapChainImageViews[i],m_DepthBuffer.GetDepthImageView() };
 
         VkFramebufferCreateInfo framebufferInfo{};
         framebufferInfo.sType = VK_STRUCTURE_TYPE_FRAMEBUFFER_CREATE_INFO;
@@ -75,7 +72,7 @@ void RenderPass::CreateRenderPass(const VkFormat& swapChainImageFormat)
     dependency.dstAccessMask = VK_ACCESS_COLOR_ATTACHMENT_WRITE_BIT | VK_ACCESS_DEPTH_STENCIL_ATTACHMENT_WRITE_BIT;
     dependency.dependencyFlags = VK_DEPENDENCY_BY_REGION_BIT;
 
-    std::array attachments = { colorAttachment,depthAttachment };
+    const std::array attachments = { colorAttachment,depthAttachment };
     VkRenderPassCreateInfo renderPassInfo{};
     renderPassInfo.sType = VK_STRUCTURE_TYPE_RENDER_PASS_CREATE_INFO;
     renderPassInfo.attachmentCount = static_cast<uint32_t>(attachments.size());

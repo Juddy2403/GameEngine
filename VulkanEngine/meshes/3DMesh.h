@@ -1,25 +1,12 @@
-// #pragma once
-// #include <vulkan/vulkan_core.h>
-// #include <vector>
-// #include <unordered_map>
-// #include <memory>
-// #include "DescriptorPool.h"
-// #include "TrsTransform.h"
-// #include "texture/TextureLoader.h"
-
 #pragma once
 #include <vulkan/vulkan_core.h>
 #include <vector>
-#include <string>
 #include <unordered_map>
 #include <memory>
 #include <glm/glm.hpp>
 
 #include "DescriptorPool.h"
-#include "DataBuffer.h"
 #include "Vertex.h"
-#include "texture/Texture.h"
-
 #include "TrsTransform.h"
 #include "texture/TextureLoader.h"
 

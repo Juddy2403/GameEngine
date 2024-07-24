@@ -8,34 +8,33 @@
 #define GLM_ENABLE_EXPERIMENTAL
 #include <glm/gtx/hash.hpp>
 
-struct Vertex3D {
+struct Vertex3D
+{
     glm::vec3 m_Pos{};
     glm::vec3 m_Normal{};
     glm::vec3 m_Color{ 1,1,1 };
-    glm::vec2 m_TexCoord;
+    glm::vec2 m_TexCoord{};
     glm::vec3 m_Tangent{};
 
     static VkPipelineVertexInputStateCreateInfo CreateVertexInputStateInfo()
     {
         VkPipelineVertexInputStateCreateInfo vertexInputInfo{};
 
-        static auto bindingDescription = Vertex3D::getBindingDescription();
-        static auto attributeDescriptions = Vertex3D::getAttributeDescriptions();
+        static auto bindingDescription = Vertex3D::GetBindingDescription();
+        static auto attributeDescriptions = Vertex3D::GetAttributeDescriptions();
 
         vertexInputInfo.vertexBindingDescriptionCount = 1;
         vertexInputInfo.vertexAttributeDescriptionCount = static_cast<uint32_t>(attributeDescriptions.size());
         vertexInputInfo.pVertexBindingDescriptions = &bindingDescription;
         vertexInputInfo.pVertexAttributeDescriptions = attributeDescriptions.data();
         vertexInputInfo.sType = VK_STRUCTURE_TYPE_PIPELINE_VERTEX_INPUT_STATE_CREATE_INFO;
-        //vertexInputInfo.vertexBindingDescriptionCount = 0; //&m_VertexInputBindingDescription
-        //vertexInputInfo.vertexAttributeDescriptionCount = 0;
 
         return vertexInputInfo;
     }
 
-    static VkVertexInputBindingDescription getBindingDescription() {
-
-        VkVertexInputBindingDescription bindingDescription{};
+    static VkVertexInputBindingDescription GetBindingDescription()
+    {
+        VkVertexInputBindingDescription bindingDescription;
         bindingDescription.binding = 0;
         bindingDescription.stride = sizeof(Vertex3D);
         bindingDescription.inputRate = VK_VERTEX_INPUT_RATE_VERTEX;
@@ -43,7 +42,8 @@ struct Vertex3D {
         return bindingDescription;
     }
 
-    static std::array<VkVertexInputAttributeDescription, 5> getAttributeDescriptions() {
+    static std::array<VkVertexInputAttributeDescription, 5> GetAttributeDescriptions()
+    {
         std::array<VkVertexInputAttributeDescription, 5> attributeDescriptions{};
 
         attributeDescriptions[0].binding = 0;
@@ -73,25 +73,26 @@ struct Vertex3D {
 
         return attributeDescriptions;
     }
-    bool operator==(const Vertex3D& other) const {
-        return m_Pos == other.m_Pos && m_Normal == other.m_Normal && m_Color == other.m_Color && m_TexCoord == other.m_TexCoord
-            && m_Tangent == other.m_Tangent;
+    bool operator==(const Vertex3D& other) const
+    {
+        return m_Pos == other.m_Pos && m_Normal == other.m_Normal && m_Color == other.m_Color && m_TexCoord == other.m_TexCoord && m_Tangent == other.m_Tangent;
     }
 };
 
-namespace std {
-    template<> struct hash<Vertex3D> {
-        size_t operator()(Vertex3D const& vertex) const {
-            return ((hash<glm::vec3>()(vertex.m_Pos) ^
-                     (hash<glm::vec3>()(vertex.m_Normal) << 1)) >> 1) ^
-                   (hash<glm::vec3>()(vertex.m_Color) << 1) ^
-                   (hash<glm::vec2>()(vertex.m_TexCoord) << 1)
-                   ^ (hash<glm::vec3>()(vertex.m_Tangent) << 1);
-        }
-    };
-}
+template<> struct std::hash<Vertex3D>
+{
+    size_t operator()(Vertex3D const& vertex) const noexcept
+    {
+        return ((hash<glm::vec3>()(vertex.m_Pos) ^
+            (hash<glm::vec3>()(vertex.m_Normal) << 1)) >> 1) ^
+        (hash<glm::vec3>()(vertex.m_Color) << 1) ^
+        (hash<glm::vec2>()(vertex.m_TexCoord) << 1)
+        ^ (hash<glm::vec3>()(vertex.m_Tangent) << 1);
+    }
+};
 
-struct Vertex2D {
+struct Vertex2D
+{
     alignas(16) glm::vec2 m_Pos{};
     alignas(16) glm::vec3 m_Color{ 1.f,1.f,1.f };
 
@@ -99,23 +100,21 @@ struct Vertex2D {
     {
         VkPipelineVertexInputStateCreateInfo vertexInputInfo{};
 
-        static auto bindingDescription = Vertex2D::getBindingDescription();
-        static auto attributeDescriptions = Vertex2D::getAttributeDescriptions();
+        static auto bindingDescription = Vertex2D::GetBindingDescription();
+        static auto attributeDescriptions = Vertex2D::GetAttributeDescriptions();
 
         vertexInputInfo.vertexBindingDescriptionCount = 1;
         vertexInputInfo.vertexAttributeDescriptionCount = static_cast<uint32_t>(attributeDescriptions.size());
         vertexInputInfo.pVertexBindingDescriptions = &bindingDescription;
         vertexInputInfo.pVertexAttributeDescriptions = attributeDescriptions.data();
         vertexInputInfo.sType = VK_STRUCTURE_TYPE_PIPELINE_VERTEX_INPUT_STATE_CREATE_INFO;
-        //vertexInputInfo.vertexBindingDescriptionCount = 0; //&m_VertexInputBindingDescription
-        //vertexInputInfo.vertexAttributeDescriptionCount = 0;
 
         return vertexInputInfo;
     }
 
-    static VkVertexInputBindingDescription getBindingDescription() {
-
-        VkVertexInputBindingDescription bindingDescription{};
+    static VkVertexInputBindingDescription GetBindingDescription()
+    {
+        VkVertexInputBindingDescription bindingDescription;
         bindingDescription.binding = 0;
         bindingDescription.stride = sizeof(Vertex2D);
         bindingDescription.inputRate = VK_VERTEX_INPUT_RATE_VERTEX;
@@ -123,7 +122,8 @@ struct Vertex2D {
         return bindingDescription;
     }
 
-    static std::array<VkVertexInputAttributeDescription, 2> getAttributeDescriptions() {
+    static std::array<VkVertexInputAttributeDescription, 2> GetAttributeDescriptions()
+    {
         std::array<VkVertexInputAttributeDescription, 2> attributeDescriptions{};
 
         attributeDescriptions[0].binding = 0;
@@ -138,21 +138,23 @@ struct Vertex2D {
 
         return attributeDescriptions;
     }
-    bool operator==(const Vertex2D& other) const {
+    bool operator==(const Vertex2D& other) const
+    {
         return m_Pos == other.m_Pos;
     }
 };
 
-namespace std {
-    template<> struct hash<Vertex2D> {
-        size_t operator()(Vertex2D const& vertex) const {
-            return ((hash<glm::vec2>()(vertex.m_Pos) ^
-                     (hash<glm::vec3>()(vertex.m_Color) << 1)) >> 1);
-        }
-    };
-}
+template<> struct std::hash<Vertex2D>
+{
+    size_t operator()(Vertex2D const& vertex) const noexcept
+    {
+        return ((hash<glm::vec2>()(vertex.m_Pos) ^
+            (hash<glm::vec3>()(vertex.m_Color) << 1)) >> 1);
+    }
+};
 
-struct UniformBufferObject {
+struct UniformBufferObject
+{
     alignas(16) glm::mat4 model;
     alignas(16) glm::mat4 view;
     alignas(16) glm::mat4 proj;

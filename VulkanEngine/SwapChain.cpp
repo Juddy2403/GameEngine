@@ -95,10 +95,7 @@ void SwapChain::CreateSwapChain(const VkSurfaceKHR& surface, GLFWwindow* window,
         createInfo.queueFamilyIndexCount = 2;
         createInfo.pQueueFamilyIndices = queueFamilyIndices;
     }
-    else
-    {
-        createInfo.imageSharingMode = VK_SHARING_MODE_EXCLUSIVE;
-    }
+    else createInfo.imageSharingMode = VK_SHARING_MODE_EXCLUSIVE;
 
     createInfo.preTransform = swapChainSupport.m_Capabilities.currentTransform;
     createInfo.compositeAlpha = VK_COMPOSITE_ALPHA_OPAQUE_BIT_KHR;
@@ -119,9 +116,6 @@ void SwapChain::CreateSwapChain(const VkSurfaceKHR& surface, GLFWwindow* window,
 
 void SwapChain::DestroySwapChain() const
 {
-    for (const auto& imageView : m_ImageView.m_SwapChainImageViews)
-    {
-        vkDestroyImageView(VulkanBase::device, imageView, nullptr);
-    }
+    for (const auto& imageView : m_ImageView.m_SwapChainImageViews) vkDestroyImageView(VulkanBase::device, imageView, nullptr);
     vkDestroySwapchainKHR(VulkanBase::device, m_SwapChain, nullptr);
 }

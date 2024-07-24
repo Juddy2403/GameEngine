@@ -3,8 +3,10 @@
 
 VkDescriptorSetLayout Shader::m_DescriptorSetLayout;
 
-Shader::Shader(std::string vertexShaderFile, std::string fragmentShaderFile): m_VertexShaderFile{ std::move(vertexShaderFile) },
-                                                                              m_FragmentShaderFile{ std::move(fragmentShaderFile) } {}
+Shader::Shader(std::string vertexShaderFile, std::string fragmentShaderFile):
+    m_VertexShaderFile{ std::move(vertexShaderFile) },
+    m_FragmentShaderFile{ std::move(fragmentShaderFile) } {}
+
 void Shader::Initialize()
 {
     m_ShaderStages.push_back(CreateVertexShaderInfo());

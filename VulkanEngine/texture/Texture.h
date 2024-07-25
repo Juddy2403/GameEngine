@@ -22,14 +22,12 @@ public:
     bool operator!=(const Texture &rhs) const;
     ~Texture() = default;
 
-    //TODO: Add a texture manager that checks whether a texture path is already loaded
     void CreateTextureImage(const VkCommandPool &commandPool, const std::string &path);
-    VkImageView GetTextureImageView() { return m_TextureImageView;}
-    void DestroyTexture();
+    [[nodiscard]] VkImageView GetTextureImageView() const { return m_TextureImageView;}
+    void DestroyTexture() const;
     static void CreateImage(const ImageInfoStruct &imageInfo, VkImage &image, VkDeviceMemory &imageMemory);
 
     //---Texture Sampler---
-
     static void CreateTextureSampler();
     static VkSampler GetTextureSampler() { return m_TextureSampler;}
     static void DestroyTextureSampler();

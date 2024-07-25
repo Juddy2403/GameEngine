@@ -1,8 +1,9 @@
 #include "TextureManager.h"
+#include <ranges>
 
-Texture TextureManager::LoadTexture(VkCommandPool const &commandPool, const std::string &path) {
-    if (m_TextureMap.find(path) != m_TextureMap.end())
-        return m_TextureMap[path];
+Texture TextureManager::LoadTexture(VkCommandPool const& commandPool, const std::string& path)
+{
+    if (m_TextureMap.contains(path))return m_TextureMap[path];
 
     Texture texture{};
     texture.CreateTextureImage(commandPool, path);
@@ -10,8 +11,8 @@ Texture TextureManager::LoadTexture(VkCommandPool const &commandPool, const std:
     return texture;
 }
 
-void TextureManager::DestroyTextures() {
-    for(auto& texture : m_TextureMap)
-        texture.second.DestroyTexture();
+void TextureManager::DestroyTextures()
+{
+    for (auto& val : m_TextureMap | std::views::values) val.DestroyTexture();
     m_TextureMap.clear();
 }

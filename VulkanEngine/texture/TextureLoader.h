@@ -20,7 +20,7 @@ private:
     Texture m_NormalTexture{};
     Texture m_GlossTexture{};
     Texture m_SpecularTexture{};
-
+//TODO: switch to a pointer instead of ref so you can check if it's nullptr
     DescriptorPool& m_DescriptorPool;
 };
 

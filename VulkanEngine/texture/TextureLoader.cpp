@@ -1,5 +1,4 @@
 #include "TextureLoader.h"
-
 #include "DescriptorPool.h"
 #include "TextureManager.h"
 

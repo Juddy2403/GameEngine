@@ -5,6 +5,7 @@
 #include "stb_image.h"
 #include <stdexcept>
 
+using namespace VulkanEngine;
 VkSampler Texture::m_TextureSampler;
 
 void Texture::CreateTextureImage(const VkCommandPool& commandPool, const std::string& path)

@@ -2,6 +2,7 @@
 #include "DescriptorPool.h"
 #include "TextureManager.h"
 
+using namespace VulkanEngine;
 Texture TextureLoader::m_DefaultTexture;
 TextureLoader::TextureLoader(DescriptorPool& descriptorPool): m_DescriptorPool(descriptorPool) {
     m_DescriptorPool.SetAlbedoImageView(m_DefaultTexture.GetTextureImageView());

@@ -2,6 +2,7 @@
 #include "TrsTransform.h"
 #include "TimeManager.h"
 
+using namespace VulkanEngine;
 void TrsTransform::Translate(const glm::vec3 &translation) {
     m_TranslationMatrix = glm::translate(m_TranslationMatrix, translation);
     m_NeedsUpdate = true;

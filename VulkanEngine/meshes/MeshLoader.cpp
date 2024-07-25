@@ -5,6 +5,7 @@
 #include "3DMesh.h"
 #include "2DMesh.h"
 
+using namespace VulkanEngine;
 glm::vec3 MeshLoader::Reject(const glm::vec3& a, const glm::vec3& b)
 {
     const glm::vec3 proj = glm::dot(a, b) / glm::dot(b, b) * b;

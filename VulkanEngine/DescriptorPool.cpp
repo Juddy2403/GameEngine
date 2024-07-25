@@ -3,6 +3,7 @@
 
 #include "DataBuffer.h"
 
+using namespace VulkanEngine;
 const std::vector<VkDescriptorSet>& DescriptorPool::GetDescriptorSets() const
 {
     return m_DescriptorSets;

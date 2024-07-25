@@ -1,6 +1,7 @@
 #include "RenderPass.h"
 #include <vulkanbase/VulkanBase.h>
 
+using namespace VulkanEngine;
 DepthBuffer RenderPass::m_DepthBuffer;
 void RenderPass::CreateFrameBuffers(const std::vector<VkImageView>& swapChainImageViews, const VkExtent2D& swapChainExtent)
 {

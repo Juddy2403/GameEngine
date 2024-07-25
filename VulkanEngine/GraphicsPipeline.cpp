@@ -2,6 +2,7 @@
 #include "Shader.h"
 #include <vulkanbase/VulkanBase.h>
 
+using namespace VulkanEngine;
 VkPipelineLayout GraphicsPipeline::m_PipelineLayout;
 
 void GraphicsPipeline::CreateGraphicsPipeline(const VkRenderPass& renderPass, Shader& gradientShader, VkPipelineVertexInputStateCreateInfo pipelineVerInputStateCreateInfo, bool enableDepthBuffering)

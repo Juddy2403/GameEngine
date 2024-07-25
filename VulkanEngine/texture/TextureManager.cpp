@@ -1,6 +1,7 @@
 #include "TextureManager.h"
 #include <ranges>
 
+using namespace VulkanEngine;
 Texture TextureManager::LoadTexture(VkCommandPool const& commandPool, const std::string& path)
 {
     if (m_TextureMap.contains(path))return m_TextureMap[path];

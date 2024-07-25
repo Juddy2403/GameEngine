@@ -1,5 +1,6 @@
 #include "vulkanbase/VulkanBase.h"
 
+using namespace VulkanEngine;
 VkPhysicalDevice VulkanBase::physicalDevice = VK_NULL_HANDLE;
 VkDevice VulkanBase::device = VK_NULL_HANDLE;
 VkExtent2D VulkanBase::swapChainExtent;

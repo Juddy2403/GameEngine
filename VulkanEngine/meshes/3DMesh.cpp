@@ -4,6 +4,7 @@
 #include "DataBuffer.h"
 #include "Vertex.h"
 
+using namespace VulkanEngine;
 Mesh3D::Mesh3D(std::vector<Vertex3D>&& vertices, std::vector<uint32_t>&& indices) : Mesh3D()
 {
     m_Vertices = std::move(vertices);

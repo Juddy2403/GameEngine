@@ -3,6 +3,7 @@
 #include "LevelParser.h"
 #include "texture/TextureManager.h"
 
+using namespace VulkanEngine;
 DescriptorPool Level::m_2DDescriptorPool;
 int Level::m_AreNormalsEnabled = 1;
 

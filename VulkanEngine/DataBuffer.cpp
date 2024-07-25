@@ -1,6 +1,7 @@
 #include "DataBuffer.h"
 #include <vulkanbase/VulkanBase.h>
 
+using namespace VulkanEngine;
 DataBuffer::DataBuffer(const VkBufferUsageFlags usage, const VkMemoryPropertyFlags properties):
     m_Usage{ usage },
     m_Properties{ properties }

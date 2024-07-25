@@ -1,6 +1,7 @@
 #include "DepthBuffer.h"
 #include <vulkanbase/VulkanBase.h>
 
+using namespace VulkanEngine;
 void DepthBuffer::CreateDepthResources()
 {
     const VkFormat depthFormat = FindDepthFormat();

@@ -1,4 +1,6 @@
 #pragma once
+#include <vector>
+#include <fstream>
 
 #define VK_USE_PLATFORM_WIN32_KHR
 #define GLFW_INCLUDE_VULKAN
@@ -6,20 +8,17 @@
 #define GLFW_EXPOSE_NATIVE_WIN32
 #include <glfw3native.h>
 
-
-constexpr uint32_t MAX_FRAMES_IN_FLIGHT = 3;
-#ifdef NDEBUG
-const bool enableValidationLayers = false;
+namespace VulkanEngine
+{
+    #ifdef NDEBUG
+    const bool enableValidationLayers = false;
 #else
-const bool enableValidationLayers = true;
+    const bool enableValidationLayers = true;
 #endif
+    constexpr uint32_t MAX_FRAMES_IN_FLIGHT = 3;
 
-#include <vector>
-#include <fstream>
 
-VkResult CreateDebugUtilsMessengerEXT(VkInstance instance, const VkDebugUtilsMessengerCreateInfoEXT* pCreateInfo, const VkAllocationCallbacks* pAllocator, VkDebugUtilsMessengerEXT* pDebugMessenger);
-
-void DestroyDebugUtilsMessengerEXT(VkInstance instance, VkDebugUtilsMessengerEXT debugMessenger, const VkAllocationCallbacks* pAllocator);
-
-std::vector<char> readFile(const std::string& filename);
-
+    VkResult CreateDebugUtilsMessengerEXT(VkInstance instance, const VkDebugUtilsMessengerCreateInfoEXT* pCreateInfo, const VkAllocationCallbacks* pAllocator, VkDebugUtilsMessengerEXT* pDebugMessenger);
+    void DestroyDebugUtilsMessengerEXT(VkInstance instance, VkDebugUtilsMessengerEXT debugMessenger, const VkAllocationCallbacks* pAllocator);
+    std::vector<char> ReadFile(const std::string& filename);
+}

@@ -2,6 +2,7 @@
 #include "ImageView.h"
 #include "vulkanbase/VulkanBase.h"
 
+using namespace VulkanEngine;
 void ImageView::CreateImageViews() {
     m_SwapChainImageViews.resize(m_SwapChainImages.size());
 

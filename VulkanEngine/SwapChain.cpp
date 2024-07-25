@@ -1,6 +1,7 @@
 #include "SwapChain.h"
 #include "vulkanbase/VulkanBase.h"
 
+using namespace VulkanEngine;
 SwapChainSupportDetails SwapChain::QuerySwapChainSupport(const VkSurfaceKHR& surface)
 {
     SwapChainSupportDetails details;

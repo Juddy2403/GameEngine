@@ -1,6 +1,7 @@
 #include "CommandBuffer.h"
 #include "vulkanbase/VulkanBase.h"
 
+using namespace VulkanEngine;
 CommandBuffer::CommandBuffer(CommandBuffer&& other) noexcept
 {
     m_CommandBuffer = other.m_CommandBuffer;

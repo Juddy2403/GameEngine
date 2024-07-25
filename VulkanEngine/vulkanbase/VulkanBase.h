@@ -32,206 +32,209 @@
 #include "SwapChain.h"
 #include <unordered_set>
 
-const std::vector<const char *> validationLayers = {
+namespace VulkanEngine
+{
+    const std::vector<const char *> validationLayers = {
         "VK_LAYER_KHRONOS_validation"
 };
 
-const std::vector<const char *> deviceExtensions = {
+    const std::vector<const char *> deviceExtensions = {
         VK_KHR_SWAPCHAIN_EXTENSION_NAME
 };
-enum class ShadingMode {
-    lambertMode,
-    normalMode,
-    specularMode,
-    combinedMode
-};
+    enum class ShadingMode {
+        lambertMode,
+        normalMode,
+        specularMode,
+        combinedMode
+    };
 
-class VulkanBase {
-public:
-    void run() {
-        InitWindow();
-        initVulkan();
-        mainLoop();
-        cleanup();
-    }
+    class VulkanBase {
+    public:
+        void run() {
+            InitWindow();
+            initVulkan();
+            mainLoop();
+            cleanup();
+        }
 
-    static VkPhysicalDevice physicalDevice;
-    static VkDevice device;
-    static VkExtent2D swapChainExtent;
-    static VkQueue graphicsQueue;
+        static VkPhysicalDevice physicalDevice;
+        static VkDevice device;
+        static VkExtent2D swapChainExtent;
+        static VkQueue graphicsQueue;
 
-private:
-    void initVulkan() {
-        // week 06
-        CreateInstance();
-        SetupDebugMessenger();
-        CreateSurface();
+    private:
+        void initVulkan() {
+            // week 06
+            CreateInstance();
+            SetupDebugMessenger();
+            CreateSurface();
 
-        // week 05
-        PickPhysicalDevice();
-        CreateLogicalDevice();
+            // week 05
+            PickPhysicalDevice();
+            CreateLogicalDevice();
 
-        // week 04
-        m_SwapChain.CreateSwapChain(surface, window, FindQueueFamilies(physicalDevice));
-        m_SwapChain.GetImageView().CreateImageViews();
+            // week 04
+            m_SwapChain.CreateSwapChain(surface, window, FindQueueFamilies(physicalDevice));
+            m_SwapChain.GetImageView().CreateImageViews();
 
-        // week 03
-        m_3DShader.Initialize();
-        m_2DShader.Initialize();
-        m_RenderPass.CreateRenderPass(m_SwapChain.GetImageView().m_SwapChainImageFormat);
-        Shader::CreateDescriptor();
-        GraphicsPipeline::CreatePipelineLayout();
-        m_3DGraphicsPipeline.CreateGraphicsPipeline(m_RenderPass.GetRenderPass(), m_3DShader,
-                                                    Vertex3D::CreateVertexInputStateInfo());
-        m_2DGraphicsPipeline.CreateGraphicsPipeline(m_RenderPass.GetRenderPass(), m_2DShader,
-                                                    Vertex2D::CreateVertexInputStateInfo(), false);
-        m_RenderPass.CreateFrameBuffers(m_SwapChain.GetImageView().m_SwapChainImageViews, swapChainExtent);
-        m_Camera.Initialize(45.f, {0.f, 0.f, -2.f},
-                            static_cast<float>(swapChainExtent.width) / static_cast<float>(swapChainExtent.height));
+            // week 03
+            m_3DShader.Initialize();
+            m_2DShader.Initialize();
+            m_RenderPass.CreateRenderPass(m_SwapChain.GetImageView().m_SwapChainImageFormat);
+            Shader::CreateDescriptor();
+            GraphicsPipeline::CreatePipelineLayout();
+            m_3DGraphicsPipeline.CreateGraphicsPipeline(m_RenderPass.GetRenderPass(), m_3DShader,
+                                                        Vertex3D::CreateVertexInputStateInfo());
+            m_2DGraphicsPipeline.CreateGraphicsPipeline(m_RenderPass.GetRenderPass(), m_2DShader,
+                                                        Vertex2D::CreateVertexInputStateInfo(), false);
+            m_RenderPass.CreateFrameBuffers(m_SwapChain.GetImageView().m_SwapChainImageViews, swapChainExtent);
+            m_Camera.Initialize(45.f, {0.f, 0.f, -2.f},
+                                static_cast<float>(swapChainExtent.width) / static_cast<float>(swapChainExtent.height));
 
-        m_CommandPool = CommandPool{surface, FindQueueFamilies(physicalDevice)};
-        m_CommandBuffer = CommandBuffer{m_CommandPool.GetCommandPool()};
-        m_Level.InitializeLevel(m_CommandPool.GetCommandPool(), m_Camera.m_ProjectionMatrix);
+            m_CommandPool = CommandPool{surface, FindQueueFamilies(physicalDevice)};
+            m_CommandBuffer = CommandBuffer{m_CommandPool.GetCommandPool()};
+            m_Level.InitializeLevel(m_CommandPool.GetCommandPool(), m_Camera.m_ProjectionMatrix);
 
-        // week 06
-        CreateSyncObjects();
-    }
+            // week 06
+            CreateSyncObjects();
+        }
 
-    void mainLoop() {
-        while (!glfwWindowShouldClose(window)) {
-            glfwPollEvents();
-            ProcessInput();
-            TimeManager::GetInstance().Update();
-            if (m_HasWindowResized) {
-                vkDeviceWaitIdle(device);
-                m_SwapChain.DestroySwapChain();
-                m_SwapChain.CreateSwapChain(surface, window, FindQueueFamilies(physicalDevice));
-                m_SwapChain.GetImageView().CreateImageViews();
-                m_RenderPass.DestroyRenderPass();
-                m_RenderPass.CreateRenderPass(m_SwapChain.GetImageView().m_SwapChainImageFormat);
-                m_Camera.CalculateProjectionMatrix(static_cast<float>(m_Width) / static_cast<float>(m_Height));
-                m_Level.WindowHasBeenResized(m_Camera.m_ProjectionMatrix);
-                m_RenderPass.CreateFrameBuffers(m_SwapChain.GetImageView().m_SwapChainImageViews, swapChainExtent);
-                m_HasWindowResized = false;
+        void mainLoop() {
+            while (!glfwWindowShouldClose(window)) {
+                glfwPollEvents();
+                ProcessInput();
+                TimeManager::GetInstance().Update();
+                if (m_HasWindowResized) {
+                    vkDeviceWaitIdle(device);
+                    m_SwapChain.DestroySwapChain();
+                    m_SwapChain.CreateSwapChain(surface, window, FindQueueFamilies(physicalDevice));
+                    m_SwapChain.GetImageView().CreateImageViews();
+                    m_RenderPass.DestroyRenderPass();
+                    m_RenderPass.CreateRenderPass(m_SwapChain.GetImageView().m_SwapChainImageFormat);
+                    m_Camera.CalculateProjectionMatrix(static_cast<float>(m_Width) / static_cast<float>(m_Height));
+                    m_Level.WindowHasBeenResized(m_Camera.m_ProjectionMatrix);
+                    m_RenderPass.CreateFrameBuffers(m_SwapChain.GetImageView().m_SwapChainImageViews, swapChainExtent);
+                    m_HasWindowResized = false;
+                }
+                m_Camera.Update();
+                DrawFrame();
+
             }
-            m_Camera.Update();
-            DrawFrame();
-
+            vkDeviceWaitIdle(device);
         }
-        vkDeviceWaitIdle(device);
-    }
 
-    void cleanup() {
-        vkDestroySemaphore(device, renderFinishedSemaphore, nullptr);
-        vkDestroySemaphore(device, imageAvailableSemaphore, nullptr);
-        vkDestroyFence(device, inFlightFence, nullptr);
+        void cleanup() {
+            vkDestroySemaphore(device, renderFinishedSemaphore, nullptr);
+            vkDestroySemaphore(device, imageAvailableSemaphore, nullptr);
+            vkDestroyFence(device, inFlightFence, nullptr);
 
-        m_CommandPool.DestroyCommandPool();
+            m_CommandPool.DestroyCommandPool();
 
-        m_3DGraphicsPipeline.DestroyGraphicsPipeline();
-        m_2DGraphicsPipeline.DestroyGraphicsPipeline();
-        GraphicsPipeline::DestroyGraphicsPipelineLayout();
-        Shader::DestroyDescriptorSetLayout();
-        m_RenderPass.DestroyRenderPass();
+            m_3DGraphicsPipeline.DestroyGraphicsPipeline();
+            m_2DGraphicsPipeline.DestroyGraphicsPipeline();
+            GraphicsPipeline::DestroyGraphicsPipelineLayout();
+            Shader::DestroyDescriptorSetLayout();
+            m_RenderPass.DestroyRenderPass();
 
-        if (enableValidationLayers) {
-            DestroyDebugUtilsMessengerEXT(instance, debugMessenger, nullptr);
+            if (enableValidationLayers) {
+                DestroyDebugUtilsMessengerEXT(instance, debugMessenger, nullptr);
+            }
+            m_SwapChain.DestroySwapChain();
+
+            m_Level.DestroyLevel();
+            vkDestroyDevice(device, nullptr);
+
+            vkDestroySurfaceKHR(instance, surface, nullptr);
+            vkDestroyInstance(instance, nullptr);
+
+            glfwDestroyWindow(window);
+            glfwTerminate();
         }
-        m_SwapChain.DestroySwapChain();
 
-        m_Level.DestroyLevel();
-        vkDestroyDevice(device, nullptr);
-
-        vkDestroySurfaceKHR(instance, surface, nullptr);
-        vkDestroyInstance(instance, nullptr);
-
-        glfwDestroyWindow(window);
-        glfwTerminate();
-    }
-
-    void CreateSurface() {
-        if (glfwCreateWindowSurface(instance, window, nullptr, &surface) != VK_SUCCESS) {
-            throw std::runtime_error("failed to create window surface!");
+        void CreateSurface() {
+            if (glfwCreateWindowSurface(instance, window, nullptr, &surface) != VK_SUCCESS) {
+                throw std::runtime_error("failed to create window surface!");
+            }
         }
-    }
 
-    ShadingMode m_ShadingMode = ShadingMode::combinedMode;
-    static uint32_t m_Width;
-    static uint32_t m_Height;
-    static bool m_HasWindowResized;
-    Camera m_Camera{};
-    Shader m_3DShader{"shaders/CompiledSpv/3Dshader.vert.spv",
-                      "shaders/CompiledSpv/3Dshader.frag.spv"};
-    Shader m_2DShader{"shaders/CompiledSpv/2Dshader.vert.spv",
-                      "shaders/CompiledSpv/2Dshader.frag.spv"};
-    CommandPool m_CommandPool{};
-    CommandBuffer m_CommandBuffer{};
-    Level m_Level{};
-    RenderPass m_RenderPass{};
-    GraphicsPipeline m_3DGraphicsPipeline{};
-    GraphicsPipeline m_2DGraphicsPipeline{};
-    glm::vec2 m_LastMousePos{};
-    std::unordered_set<int> m_PressedKeys;
-    GLFWwindow *window;
+        ShadingMode m_ShadingMode = ShadingMode::combinedMode;
+        static uint32_t m_Width;
+        static uint32_t m_Height;
+        static bool m_HasWindowResized;
+        Camera m_Camera{};
+        Shader m_3DShader{"shaders/CompiledSpv/3Dshader.vert.spv",
+                          "shaders/CompiledSpv/3Dshader.frag.spv"};
+        Shader m_2DShader{"shaders/CompiledSpv/2Dshader.vert.spv",
+                          "shaders/CompiledSpv/2Dshader.frag.spv"};
+        CommandPool m_CommandPool{};
+        CommandBuffer m_CommandBuffer{};
+        Level m_Level{};
+        RenderPass m_RenderPass{};
+        GraphicsPipeline m_3DGraphicsPipeline{};
+        GraphicsPipeline m_2DGraphicsPipeline{};
+        glm::vec2 m_LastMousePos{};
+        std::unordered_set<int> m_PressedKeys;
+        GLFWwindow *window;
 
-    void InitWindow();
+        void InitWindow();
 
-    QueueFamilyIndices FindQueueFamilies(VkPhysicalDevice vkDevice);
+        QueueFamilyIndices FindQueueFamilies(VkPhysicalDevice vkDevice);
 
-    void DrawFrame(uint32_t imageIndex);
-    // Swap chain and image view support
+        void DrawFrame(uint32_t imageIndex);
+        // Swap chain and image view support
 
-    SwapChain m_SwapChain{};
-    // Logical and physical device
+        SwapChain m_SwapChain{};
+        // Logical and physical device
 
-    VkQueue presentQueue;
+        VkQueue presentQueue;
 
-    void PickPhysicalDevice();
+        void PickPhysicalDevice();
 
-    bool IsDeviceSuitable(VkPhysicalDevice device);
+        bool IsDeviceSuitable(VkPhysicalDevice device);
 
-    void CreateLogicalDevice();
+        void CreateLogicalDevice();
 
-    // Main initialization
+        // Main initialization
 
-    VkInstance instance;
-    VkDebugUtilsMessengerEXT debugMessenger;
+        VkInstance instance;
+        VkDebugUtilsMessengerEXT debugMessenger;
 
-    VkSurfaceKHR surface;
+        VkSurfaceKHR surface;
 
-    VkSemaphore imageAvailableSemaphore;
-    VkSemaphore renderFinishedSemaphore;
-    VkFence inFlightFence;
+        VkSemaphore imageAvailableSemaphore;
+        VkSemaphore renderFinishedSemaphore;
+        VkFence inFlightFence;
 
-    static void PopulateDebugMessengerCreateInfo(VkDebugUtilsMessengerCreateInfoEXT &createInfo);
+        static void PopulateDebugMessengerCreateInfo(VkDebugUtilsMessengerCreateInfoEXT &createInfo);
 
-    void SetupDebugMessenger();
+        void SetupDebugMessenger();
 
-    static std::vector<const char *> GetRequiredExtensions();
+        static std::vector<const char *> GetRequiredExtensions();
 
-    static bool CheckDeviceExtensionSupport(VkPhysicalDevice device);
+        static bool CheckDeviceExtensionSupport(VkPhysicalDevice device);
 
-    void CreateInstance();
+        void CreateInstance();
 
-    void CreateSyncObjects();
+        void CreateSyncObjects();
 
-    void DrawFrame();
+        void DrawFrame();
 
-    static VKAPI_ATTR VkBool32 VKAPI_CALL debugCallback(VkDebugUtilsMessageSeverityFlagBitsEXT messageSeverity,
-                                                        VkDebugUtilsMessageTypeFlagsEXT messageType,
-                                                        const VkDebugUtilsMessengerCallbackDataEXT *pCallbackData,
-                                                        void *pUserData) {
-        std::cerr << "validation layer: " << pCallbackData->pMessage << std::endl;
-        return VK_FALSE;
-    }
+        static VKAPI_ATTR VkBool32 VKAPI_CALL debugCallback(VkDebugUtilsMessageSeverityFlagBitsEXT messageSeverity,
+                                                            VkDebugUtilsMessageTypeFlagsEXT messageType,
+                                                            const VkDebugUtilsMessengerCallbackDataEXT *pCallbackData,
+                                                            void *pUserData) {
+            std::cerr << "validation layer: " << pCallbackData->pMessage << std::endl;
+            return VK_FALSE;
+        }
 
-    void KeyEvent(int key, int scancode, int action, int mods);
+        void KeyEvent(int key, int scancode, int action, int mods);
 
-    void MouseMove(GLFWwindow *window, double xpos, double ypos);
+        void MouseMove(GLFWwindow *window, double xpos, double ypos);
 
-    void MouseEvent(GLFWwindow *window, int button, int action, int mods);
+        void MouseEvent(GLFWwindow *window, int button, int action, int mods);
 
-    void ProcessInput();
+        void ProcessInput();
 
-    static void WindowResized(GLFWwindow *window, int width, int height);
-};
+        static void WindowResized(GLFWwindow *window, int width, int height);
+    };
+}

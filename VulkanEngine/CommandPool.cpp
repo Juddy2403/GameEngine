@@ -1,6 +1,7 @@
 #include "CommandPool.h"
 #include "vulkanbase/VulkanBase.h"
 
+using namespace VulkanEngine;
 VkCommandPool CommandPool::CreateCommandPool(const VkSurfaceKHR& surface, const QueueFamilyIndices& queueFamilyIndices,
     const VkCommandPoolCreateFlags flags = VK_COMMAND_POOL_CREATE_RESET_COMMAND_BUFFER_BIT)
 {

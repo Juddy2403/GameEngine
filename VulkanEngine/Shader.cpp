@@ -1,6 +1,7 @@
 #include "Shader.h"
 #include <vulkanbase/VulkanBase.h>
 
+using namespace VulkanEngine;
 VkDescriptorSetLayout Shader::m_DescriptorSetLayout;
 
 Shader::Shader(std::string vertexShaderFile, std::string fragmentShaderFile):
@@ -24,7 +25,7 @@ void Shader::DestroyShaderModules()
 
 VkPipelineShaderStageCreateInfo Shader::CreateFragmentShaderInfo() const
 {
-    const std::vector<char> fragShaderCode = readFile(m_FragmentShaderFile);
+    const std::vector<char> fragShaderCode = ReadFile(m_FragmentShaderFile);
     const VkShaderModule fragShaderModule = CreateShaderModule(fragShaderCode);
 
     VkPipelineShaderStageCreateInfo fragShaderStageInfo{};
@@ -38,7 +39,7 @@ VkPipelineShaderStageCreateInfo Shader::CreateFragmentShaderInfo() const
 
 VkPipelineShaderStageCreateInfo Shader::CreateVertexShaderInfo() const
 {
-    const std::vector<char> vertShaderCode = readFile(m_VertexShaderFile);
+    const std::vector<char> vertShaderCode = ReadFile(m_VertexShaderFile);
     const VkShaderModule vertShaderModule = CreateShaderModule(vertShaderCode);
 
     VkPipelineShaderStageCreateInfo vertShaderStageInfo{};

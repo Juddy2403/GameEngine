@@ -1,6 +1,7 @@
 #include "2DMesh.h"
 #include "vulkanbase/VulkanBase.h"
 
+using namespace VulkanEngine;
 Mesh2D::Mesh2D()
 {
     m_VertexBuffer = std::make_unique<DataBuffer>(VK_BUFFER_USAGE_VERTEX_BUFFER_BIT, VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT);

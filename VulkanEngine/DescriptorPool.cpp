@@ -18,10 +18,10 @@ void DescriptorPool::DestroyUniformBuffers() const
 {
     for (uint32_t i = 0; i < MAX_FRAMES_IN_FLIGHT; i++)
     {
-        vkDestroyBuffer(VulkanBase::device, m_UniformBuffers[i], nullptr);
-        vkFreeMemory(VulkanBase::device, m_UniformBuffersMemory[i], nullptr);
+        vkDestroyBuffer(VulkanBase::m_Device, m_UniformBuffers[i], nullptr);
+        vkFreeMemory(VulkanBase::m_Device, m_UniformBuffersMemory[i], nullptr);
     }
-    vkDestroyDescriptorPool(VulkanBase::device, m_DescriptorPool, nullptr);
+    vkDestroyDescriptorPool(VulkanBase::m_Device, m_DescriptorPool, nullptr);
 }
 
 void DescriptorPool::CreateUniformBuffers()
@@ -34,7 +34,7 @@ void DescriptorPool::CreateUniformBuffers()
     {
         constexpr VkDeviceSize bufferSize = sizeof(UniformBufferObject);
         DataBuffer::CreateBuffer(bufferSize, VK_BUFFER_USAGE_UNIFORM_BUFFER_BIT, VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT, m_UniformBuffers[i], m_UniformBuffersMemory[i]);
-        vkMapMemory(VulkanBase::device, m_UniformBuffersMemory[i], 0, bufferSize, 0, &m_UniformBuffersMapped[i]);
+        vkMapMemory(VulkanBase::m_Device, m_UniformBuffersMemory[i], 0, bufferSize, 0, &m_UniformBuffersMapped[i]);
     }
 }
 
@@ -58,7 +58,7 @@ void DescriptorPool::CreateDescriptorPool()
     poolInfo.pPoolSizes = poolSizes.data();
     poolInfo.maxSets = static_cast<uint32_t>(MAX_FRAMES_IN_FLIGHT);
 
-    if (vkCreateDescriptorPool(VulkanBase::device, &poolInfo, nullptr, &m_DescriptorPool) != VK_SUCCESS) throw std::runtime_error("failed to create descriptor pool!");
+    if (vkCreateDescriptorPool(VulkanBase::m_Device, &poolInfo, nullptr, &m_DescriptorPool) != VK_SUCCESS) throw std::runtime_error("failed to create descriptor pool!");
 }
 
 void DescriptorPool::CreateDescriptorSets()
@@ -71,7 +71,7 @@ void DescriptorPool::CreateDescriptorSets()
     allocInfo.pSetLayouts = layouts.data();
 
     m_DescriptorSets.resize(MAX_FRAMES_IN_FLIGHT);
-    if (vkAllocateDescriptorSets(VulkanBase::device, &allocInfo, m_DescriptorSets.data()) != VK_SUCCESS) throw std::runtime_error("failed to allocate descriptor sets!");
+    if (vkAllocateDescriptorSets(VulkanBase::m_Device, &allocInfo, m_DescriptorSets.data()) != VK_SUCCESS) throw std::runtime_error("failed to allocate descriptor sets!");
 
     for (uint32_t i = 0; i < MAX_FRAMES_IN_FLIGHT; i++) UpdateDescriptorSets(i);
 }
@@ -95,7 +95,7 @@ void DescriptorPool::UpdateDescriptorSets(const uint32_t currentFrame) const
         descriptorWrite.pBufferInfo = &bufferInfo;
         descriptorWrite.pImageInfo = nullptr; // Optional
         descriptorWrite.pTexelBufferView = nullptr; // Optional
-        vkUpdateDescriptorSets(VulkanBase::device, 1, &descriptorWrite, 0, nullptr);
+        vkUpdateDescriptorSets(VulkanBase::m_Device, 1, &descriptorWrite, 0, nullptr);
     }
     else
     {
@@ -161,7 +161,7 @@ void DescriptorPool::UpdateDescriptorSets(const uint32_t currentFrame) const
         descriptorWrites[4].descriptorCount = 1;
         descriptorWrites[4].pImageInfo = &specularImageInfo;
 
-        vkUpdateDescriptorSets(VulkanBase::device, static_cast<uint32_t>(descriptorWrites.size()), descriptorWrites.data(), 0, nullptr);
+        vkUpdateDescriptorSets(VulkanBase::m_Device, static_cast<uint32_t>(descriptorWrites.size()), descriptorWrites.data(), 0, nullptr);
     }
 }
 

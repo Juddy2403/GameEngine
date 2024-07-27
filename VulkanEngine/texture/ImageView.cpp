@@ -24,7 +24,7 @@ VkImageView ImageView::CreateImageView(const VkImage image, const VkFormat forma
     viewInfo.subresourceRange.layerCount = 1;
 
     VkImageView imageView;
-    if (vkCreateImageView(VulkanBase::device, &viewInfo, nullptr, &imageView) != VK_SUCCESS) {
+    if (vkCreateImageView(VulkanBase::m_Device, &viewInfo, nullptr, &imageView) != VK_SUCCESS) {
         throw std::runtime_error("failed to create texture image view!");
     }
 

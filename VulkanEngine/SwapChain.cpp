@@ -1,4 +1,7 @@
 #include "SwapChain.h"
+
+#include <algorithm>
+
 #include "vulkanbase/VulkanBase.h"
 
 using namespace VulkanEngine;
@@ -6,24 +9,24 @@ SwapChainSupportDetails SwapChain::QuerySwapChainSupport(const VkSurfaceKHR& sur
 {
     SwapChainSupportDetails details;
 
-    vkGetPhysicalDeviceSurfaceCapabilitiesKHR(VulkanBase::physicalDevice, surface, &details.m_Capabilities);
+    vkGetPhysicalDeviceSurfaceCapabilitiesKHR(VulkanBase::m_PhysicalDevice, surface, &details.m_Capabilities);
 
     uint32_t formatCount;
-    vkGetPhysicalDeviceSurfaceFormatsKHR(VulkanBase::physicalDevice, surface, &formatCount, nullptr);
+    vkGetPhysicalDeviceSurfaceFormatsKHR(VulkanBase::m_PhysicalDevice, surface, &formatCount, nullptr);
 
     if (formatCount != 0)
     {
         details.m_Formats.resize(formatCount);
-        vkGetPhysicalDeviceSurfaceFormatsKHR(VulkanBase::physicalDevice, surface, &formatCount, details.m_Formats.data());
+        vkGetPhysicalDeviceSurfaceFormatsKHR(VulkanBase::m_PhysicalDevice, surface, &formatCount, details.m_Formats.data());
     }
 
     uint32_t presentModeCount;
-    vkGetPhysicalDeviceSurfacePresentModesKHR(VulkanBase::physicalDevice, surface, &presentModeCount, nullptr);
+    vkGetPhysicalDeviceSurfacePresentModesKHR(VulkanBase::m_PhysicalDevice, surface, &presentModeCount, nullptr);
 
     if (presentModeCount != 0)
     {
         details.m_PresentModes.resize(presentModeCount);
-        vkGetPhysicalDeviceSurfacePresentModesKHR(VulkanBase::physicalDevice, surface, &presentModeCount, details.m_PresentModes.data());
+        vkGetPhysicalDeviceSurfacePresentModesKHR(VulkanBase::m_PhysicalDevice, surface, &presentModeCount, details.m_PresentModes.data());
     }
 
     return details;
@@ -105,18 +108,18 @@ void SwapChain::CreateSwapChain(const VkSurfaceKHR& surface, GLFWwindow* window,
 
     createInfo.oldSwapchain = VK_NULL_HANDLE;
 
-    if (vkCreateSwapchainKHR(VulkanBase::device, &createInfo, nullptr, &m_SwapChain) != VK_SUCCESS) throw std::runtime_error("failed to create swap chain!");
+    if (vkCreateSwapchainKHR(VulkanBase::m_Device, &createInfo, nullptr, &m_SwapChain) != VK_SUCCESS) throw std::runtime_error("failed to create swap chain!");
 
-    vkGetSwapchainImagesKHR(VulkanBase::device, m_SwapChain, &imageCount, nullptr);
+    vkGetSwapchainImagesKHR(VulkanBase::m_Device, m_SwapChain, &imageCount, nullptr);
     m_ImageView.m_SwapChainImages.resize(imageCount);
-    vkGetSwapchainImagesKHR(VulkanBase::device, m_SwapChain, &imageCount, m_ImageView.m_SwapChainImages.data());
+    vkGetSwapchainImagesKHR(VulkanBase::m_Device, m_SwapChain, &imageCount, m_ImageView.m_SwapChainImages.data());
 
     m_ImageView.m_SwapChainImageFormat = surfaceFormat.format;
-    VulkanBase::swapChainExtent = extent;
+    VulkanBase::m_SwapChainExtent = extent;
 }
 
 void SwapChain::DestroySwapChain() const
 {
-    for (const auto& imageView : m_ImageView.m_SwapChainImageViews) vkDestroyImageView(VulkanBase::device, imageView, nullptr);
-    vkDestroySwapchainKHR(VulkanBase::device, m_SwapChain, nullptr);
+    for (const auto& imageView : m_ImageView.m_SwapChainImageViews) vkDestroyImageView(VulkanBase::m_Device, imageView, nullptr);
+    vkDestroySwapchainKHR(VulkanBase::m_Device, m_SwapChain, nullptr);
 }

@@ -18,7 +18,7 @@ void Shader::DestroyShaderModules()
 {
     for (const VkPipelineShaderStageCreateInfo& stageInfo : m_ShaderStages)
     {
-        vkDestroyShaderModule(VulkanBase::device, stageInfo.module, nullptr);
+        vkDestroyShaderModule(VulkanBase::m_Device, stageInfo.module, nullptr);
     }
     m_ShaderStages.clear();
 }
@@ -67,7 +67,7 @@ VkShaderModule Shader::CreateShaderModule(const std::vector<char>& code)
     createInfo.pCode = reinterpret_cast<const uint32_t*>(code.data());
 
     VkShaderModule shaderModule;
-    if (vkCreateShaderModule(VulkanBase::device, &createInfo, nullptr, &shaderModule) != VK_SUCCESS) throw std::runtime_error("failed to create shader module!");
+    if (vkCreateShaderModule(VulkanBase::m_Device, &createInfo, nullptr, &shaderModule) != VK_SUCCESS) throw std::runtime_error("failed to create shader module!");
 
     return shaderModule;
 }
@@ -115,7 +115,7 @@ void Shader::CreateDescriptor()
     layoutInfo.bindingCount = static_cast<uint32_t>(bindings.size());
     layoutInfo.pBindings = bindings.data();
 
-    if (vkCreateDescriptorSetLayout(VulkanBase::device, &layoutInfo, nullptr, &m_DescriptorSetLayout) != VK_SUCCESS)
+    if (vkCreateDescriptorSetLayout(VulkanBase::m_Device, &layoutInfo, nullptr, &m_DescriptorSetLayout) != VK_SUCCESS)
     {
         throw std::runtime_error("failed to create descriptor set layout!");
     }
@@ -123,5 +123,5 @@ void Shader::CreateDescriptor()
 
 void Shader::DestroyDescriptorSetLayout()
 {
-    vkDestroyDescriptorSetLayout(VulkanBase::device, m_DescriptorSetLayout, nullptr);
+    vkDestroyDescriptorSetLayout(VulkanBase::m_Device, m_DescriptorSetLayout, nullptr);
 }

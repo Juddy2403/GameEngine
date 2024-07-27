@@ -21,7 +21,7 @@ void RenderPass::CreateFrameBuffers(const std::vector<VkImageView>& swapChainIma
         framebufferInfo.height = swapChainExtent.height;
         framebufferInfo.layers = 1;
 
-        if (vkCreateFramebuffer(VulkanBase::device, &framebufferInfo, nullptr, &m_SwapChainFramebuffers[i]) != VK_SUCCESS)
+        if (vkCreateFramebuffer(VulkanBase::m_Device, &framebufferInfo, nullptr, &m_SwapChainFramebuffers[i]) != VK_SUCCESS)
         {
             throw std::runtime_error("failed to create framebuffer!");
         }
@@ -83,15 +83,15 @@ void RenderPass::CreateRenderPass(const VkFormat& swapChainImageFormat)
     renderPassInfo.dependencyCount = 1;
     renderPassInfo.pDependencies = &dependency;
 
-    if (vkCreateRenderPass(VulkanBase::device, &renderPassInfo, nullptr, &m_RenderPass) != VK_SUCCESS) throw std::runtime_error("failed to create render pass!");
+    if (vkCreateRenderPass(VulkanBase::m_Device, &renderPassInfo, nullptr, &m_RenderPass) != VK_SUCCESS) throw std::runtime_error("failed to create render pass!");
 }
 
 void RenderPass::DestroyRenderPass() const
 {
     for (const auto& framebuffer : m_SwapChainFramebuffers)
     {
-        vkDestroyFramebuffer(VulkanBase::device, framebuffer, nullptr);
+        vkDestroyFramebuffer(VulkanBase::m_Device, framebuffer, nullptr);
     }
-    vkDestroyRenderPass(VulkanBase::device, m_RenderPass, nullptr);
+    vkDestroyRenderPass(VulkanBase::m_Device, m_RenderPass, nullptr);
     m_DepthBuffer.DestroyDepthResources();
 }

@@ -7,20 +7,13 @@
 
 #define GLFW_EXPOSE_NATIVE_WIN32
 
-#include <glfw3native.h>
 #include <glm/glm.hpp>
 #include "VulkanUtil.h"
 #include "Shader.h"
 #include <iostream>
 #include <stdexcept>
 #include <vector>
-#include <cstring>
-#include <cstdlib>
 #include <cstdint>
-#include <optional>
-#include <set>
-#include <limits>
-#include <algorithm>
 #include "CommandBuffer.h"
 #include "CommandPool.h"
 #include "meshes/3DMesh.h"
@@ -34,99 +27,94 @@
 
 namespace VulkanEngine
 {
-    const std::vector<const char *> validationLayers = {
-        "VK_LAYER_KHRONOS_validation"
-};
+    const std::vector<const char*> validationLayers = { "VK_LAYER_KHRONOS_validation" };
+    const std::vector<const char*> deviceExtensions = { VK_KHR_SWAPCHAIN_EXTENSION_NAME };
 
-    const std::vector<const char *> deviceExtensions = {
-        VK_KHR_SWAPCHAIN_EXTENSION_NAME
-};
-    enum class ShadingMode {
+    enum class ShadingMode
+    {
         lambertMode,
         normalMode,
         specularMode,
         combinedMode
     };
 
-    class VulkanBase {
+    class VulkanBase
+    {
     public:
-        void run() {
+        void Run()
+        {
             InitWindow();
-            initVulkan();
-            mainLoop();
-            cleanup();
+            InitVulkan();
+            MainLoop();
+            Cleanup();
         }
 
-        static VkPhysicalDevice physicalDevice;
-        static VkDevice device;
-        static VkExtent2D swapChainExtent;
-        static VkQueue graphicsQueue;
-
+        static VkPhysicalDevice m_PhysicalDevice;
+        static VkDevice m_Device;
+        static VkExtent2D m_SwapChainExtent;
+        static VkQueue m_GraphicsQueue;
     private:
-        void initVulkan() {
-            // week 06
+        void InitVulkan()
+        {
             CreateInstance();
             SetupDebugMessenger();
             CreateSurface();
 
-            // week 05
             PickPhysicalDevice();
             CreateLogicalDevice();
 
-            // week 04
-            m_SwapChain.CreateSwapChain(surface, window, FindQueueFamilies(physicalDevice));
+            m_SwapChain.CreateSwapChain(m_Surface, m_Window, FindQueueFamilies(m_PhysicalDevice));
             m_SwapChain.GetImageView().CreateImageViews();
 
-            // week 03
             m_3DShader.Initialize();
             m_2DShader.Initialize();
             m_RenderPass.CreateRenderPass(m_SwapChain.GetImageView().m_SwapChainImageFormat);
             Shader::CreateDescriptor();
             GraphicsPipeline::CreatePipelineLayout();
-            m_3DGraphicsPipeline.CreateGraphicsPipeline(m_RenderPass.GetRenderPass(), m_3DShader,
-                                                        Vertex3D::CreateVertexInputStateInfo());
-            m_2DGraphicsPipeline.CreateGraphicsPipeline(m_RenderPass.GetRenderPass(), m_2DShader,
-                                                        Vertex2D::CreateVertexInputStateInfo(), false);
-            m_RenderPass.CreateFrameBuffers(m_SwapChain.GetImageView().m_SwapChainImageViews, swapChainExtent);
-            m_Camera.Initialize(45.f, {0.f, 0.f, -2.f},
-                                static_cast<float>(swapChainExtent.width) / static_cast<float>(swapChainExtent.height));
 
-            m_CommandPool = CommandPool{surface, FindQueueFamilies(physicalDevice)};
-            m_CommandBuffer = CommandBuffer{m_CommandPool.GetCommandPool()};
+            m_3DGraphicsPipeline.CreateGraphicsPipeline(m_RenderPass.GetRenderPass(), m_3DShader, Vertex3D::CreateVertexInputStateInfo());
+            m_2DGraphicsPipeline.CreateGraphicsPipeline(m_RenderPass.GetRenderPass(), m_2DShader, Vertex2D::CreateVertexInputStateInfo(), false);
+            m_RenderPass.CreateFrameBuffers(m_SwapChain.GetImageView().m_SwapChainImageViews, m_SwapChainExtent);
+            m_Camera.Initialize(45.f, { 0.f,0.f,-2.f }, static_cast<float>(m_SwapChainExtent.width) / static_cast<float>(m_SwapChainExtent.height));
+
+            m_CommandPool = CommandPool{ m_Surface,FindQueueFamilies(m_PhysicalDevice) };
+            m_CommandBuffer = CommandBuffer{ m_CommandPool.GetCommandPool() };
             m_Level.InitializeLevel(m_CommandPool.GetCommandPool(), m_Camera.m_ProjectionMatrix);
 
-            // week 06
             CreateSyncObjects();
         }
 
-        void mainLoop() {
-            while (!glfwWindowShouldClose(window)) {
+        void MainLoop()
+        {
+            while (!glfwWindowShouldClose(m_Window))
+            {
                 glfwPollEvents();
                 ProcessInput();
                 TimeManager::GetInstance().Update();
-                if (m_HasWindowResized) {
-                    vkDeviceWaitIdle(device);
+                if (m_HasWindowResized)
+                {
+                    vkDeviceWaitIdle(m_Device);
                     m_SwapChain.DestroySwapChain();
-                    m_SwapChain.CreateSwapChain(surface, window, FindQueueFamilies(physicalDevice));
+                    m_SwapChain.CreateSwapChain(m_Surface, m_Window, FindQueueFamilies(m_PhysicalDevice));
                     m_SwapChain.GetImageView().CreateImageViews();
                     m_RenderPass.DestroyRenderPass();
                     m_RenderPass.CreateRenderPass(m_SwapChain.GetImageView().m_SwapChainImageFormat);
                     m_Camera.CalculateProjectionMatrix(static_cast<float>(m_Width) / static_cast<float>(m_Height));
                     m_Level.WindowHasBeenResized(m_Camera.m_ProjectionMatrix);
-                    m_RenderPass.CreateFrameBuffers(m_SwapChain.GetImageView().m_SwapChainImageViews, swapChainExtent);
+                    m_RenderPass.CreateFrameBuffers(m_SwapChain.GetImageView().m_SwapChainImageViews, m_SwapChainExtent);
                     m_HasWindowResized = false;
                 }
                 m_Camera.Update();
                 DrawFrame();
-
             }
-            vkDeviceWaitIdle(device);
+            vkDeviceWaitIdle(m_Device);
         }
 
-        void cleanup() {
-            vkDestroySemaphore(device, renderFinishedSemaphore, nullptr);
-            vkDestroySemaphore(device, imageAvailableSemaphore, nullptr);
-            vkDestroyFence(device, inFlightFence, nullptr);
+        void Cleanup() const
+        {
+            vkDestroySemaphore(m_Device, m_RenderFinishedSemaphore, nullptr);
+            vkDestroySemaphore(m_Device, m_ImageAvailableSemaphore, nullptr);
+            vkDestroyFence(m_Device, m_InFlightFence, nullptr);
 
             m_CommandPool.DestroyCommandPool();
 
@@ -136,25 +124,22 @@ namespace VulkanEngine
             Shader::DestroyDescriptorSetLayout();
             m_RenderPass.DestroyRenderPass();
 
-            if (enableValidationLayers) {
-                DestroyDebugUtilsMessengerEXT(instance, debugMessenger, nullptr);
-            }
+            if (enableValidationLayers) DestroyDebugUtilsMessengerEXT(m_Instance, m_DebugMessenger, nullptr);
             m_SwapChain.DestroySwapChain();
 
             m_Level.DestroyLevel();
-            vkDestroyDevice(device, nullptr);
+            vkDestroyDevice(m_Device, nullptr);
 
-            vkDestroySurfaceKHR(instance, surface, nullptr);
-            vkDestroyInstance(instance, nullptr);
+            vkDestroySurfaceKHR(m_Instance, m_Surface, nullptr);
+            vkDestroyInstance(m_Instance, nullptr);
 
-            glfwDestroyWindow(window);
+            glfwDestroyWindow(m_Window);
             glfwTerminate();
         }
 
-        void CreateSurface() {
-            if (glfwCreateWindowSurface(instance, window, nullptr, &surface) != VK_SUCCESS) {
-                throw std::runtime_error("failed to create window surface!");
-            }
+        void CreateSurface()
+        {
+            if (glfwCreateWindowSurface(m_Instance, m_Window, nullptr, &m_Surface) != VK_SUCCESS) throw std::runtime_error("failed to create window surface!");
         }
 
         ShadingMode m_ShadingMode = ShadingMode::combinedMode;
@@ -162,10 +147,13 @@ namespace VulkanEngine
         static uint32_t m_Height;
         static bool m_HasWindowResized;
         Camera m_Camera{};
-        Shader m_3DShader{"shaders/CompiledSpv/3Dshader.vert.spv",
-                          "shaders/CompiledSpv/3Dshader.frag.spv"};
-        Shader m_2DShader{"shaders/CompiledSpv/2Dshader.vert.spv",
-                          "shaders/CompiledSpv/2Dshader.frag.spv"};
+        Shader m_3DShader{
+            "shaders/CompiledSpv/3Dshader.vert.spv",
+            "shaders/CompiledSpv/3Dshader.frag.spv" };
+        Shader m_2DShader{
+            "shaders/CompiledSpv/2Dshader.vert.spv",
+            "shaders/CompiledSpv/2Dshader.frag.spv" };
+
         CommandPool m_CommandPool{};
         CommandBuffer m_CommandBuffer{};
         Level m_Level{};
@@ -174,67 +162,46 @@ namespace VulkanEngine
         GraphicsPipeline m_2DGraphicsPipeline{};
         glm::vec2 m_LastMousePos{};
         std::unordered_set<int> m_PressedKeys;
-        GLFWwindow *window;
+        GLFWwindow* m_Window = nullptr;
 
         void InitWindow();
-
-        QueueFamilyIndices FindQueueFamilies(VkPhysicalDevice vkDevice);
-
+        QueueFamilyIndices FindQueueFamilies(VkPhysicalDevice vkDevice) const;
         void DrawFrame(uint32_t imageIndex);
-        // Swap chain and image view support
-
         SwapChain m_SwapChain{};
-        // Logical and physical device
-
-        VkQueue presentQueue;
-
+        VkQueue m_PresentQueue = VK_NULL_HANDLE;
         void PickPhysicalDevice();
-
-        bool IsDeviceSuitable(VkPhysicalDevice device);
-
+        bool IsDeviceSuitable(VkPhysicalDevice device) const;
         void CreateLogicalDevice();
 
         // Main initialization
+        VkInstance m_Instance = VK_NULL_HANDLE;
+        VkDebugUtilsMessengerEXT m_DebugMessenger = VK_NULL_HANDLE;
 
-        VkInstance instance;
-        VkDebugUtilsMessengerEXT debugMessenger;
+        VkSurfaceKHR m_Surface = VK_NULL_HANDLE;
 
-        VkSurfaceKHR surface;
+        VkSemaphore m_ImageAvailableSemaphore = VK_NULL_HANDLE;
+        VkSemaphore m_RenderFinishedSemaphore = VK_NULL_HANDLE;
+        VkFence m_InFlightFence = VK_NULL_HANDLE;
 
-        VkSemaphore imageAvailableSemaphore;
-        VkSemaphore renderFinishedSemaphore;
-        VkFence inFlightFence;
-
-        static void PopulateDebugMessengerCreateInfo(VkDebugUtilsMessengerCreateInfoEXT &createInfo);
-
+        static void PopulateDebugMessengerCreateInfo(VkDebugUtilsMessengerCreateInfoEXT& createInfo);
         void SetupDebugMessenger();
-
-        static std::vector<const char *> GetRequiredExtensions();
-
+        static std::vector<const char*> GetRequiredExtensions();
         static bool CheckDeviceExtensionSupport(VkPhysicalDevice device);
-
         void CreateInstance();
-
         void CreateSyncObjects();
-
         void DrawFrame();
 
-        static VKAPI_ATTR VkBool32 VKAPI_CALL debugCallback(VkDebugUtilsMessageSeverityFlagBitsEXT messageSeverity,
-                                                            VkDebugUtilsMessageTypeFlagsEXT messageType,
-                                                            const VkDebugUtilsMessengerCallbackDataEXT *pCallbackData,
-                                                            void *pUserData) {
+        static VKAPI_ATTR VkBool32 VKAPI_CALL DebugCallback(VkDebugUtilsMessageSeverityFlagBitsEXT messageSeverity, VkDebugUtilsMessageTypeFlagsEXT messageType
+            , const VkDebugUtilsMessengerCallbackDataEXT* pCallbackData, void* pUserData)
+        {
             std::cerr << "validation layer: " << pCallbackData->pMessage << std::endl;
             return VK_FALSE;
         }
 
         void KeyEvent(int key, int scancode, int action, int mods);
-
-        void MouseMove(GLFWwindow *window, double xpos, double ypos);
-
-        void MouseEvent(GLFWwindow *window, int button, int action, int mods);
-
+        void MouseMove(GLFWwindow* window, double xpos, double ypos);
+        void MouseEvent(GLFWwindow* window, int button, int action, int mods);
         void ProcessInput();
-
-        static void WindowResized(GLFWwindow *window, int width, int height);
+        static void WindowResized(GLFWwindow* window, int width, int height);
     };
 }

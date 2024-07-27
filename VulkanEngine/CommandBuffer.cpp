@@ -58,8 +58,8 @@ void CommandBuffer::Submit(VkSubmitInfo submitInfo, const VkFence fence) const
     submitInfo.sType = VK_STRUCTURE_TYPE_SUBMIT_INFO;
     submitInfo.commandBufferCount = 1;
     submitInfo.pCommandBuffers = &m_CommandBuffer;
-    if (vkQueueSubmit(VulkanBase::graphicsQueue, 1, &submitInfo, fence) != VK_SUCCESS) throw std::runtime_error("failed to submit draw command buffer!");
-    vkQueueWaitIdle(VulkanBase::graphicsQueue);
+    if (vkQueueSubmit(VulkanBase::m_GraphicsQueue, 1, &submitInfo, fence) != VK_SUCCESS) throw std::runtime_error("failed to submit draw command buffer!");
+    vkQueueWaitIdle(VulkanBase::m_GraphicsQueue);
 }
 
 VkCommandBuffer CommandBuffer::CreateCommandBuffer(const VkCommandPool& commandPool)
@@ -72,12 +72,12 @@ VkCommandBuffer CommandBuffer::CreateCommandBuffer(const VkCommandPool& commandP
     allocInfo.level = VK_COMMAND_BUFFER_LEVEL_PRIMARY;
     allocInfo.commandBufferCount = 1;
 
-    if (vkAllocateCommandBuffers(VulkanBase::device, &allocInfo, &commandBuffer) != VK_SUCCESS) throw std::runtime_error("failed to allocate command buffers!");
+    if (vkAllocateCommandBuffers(VulkanBase::m_Device, &allocInfo, &commandBuffer) != VK_SUCCESS) throw std::runtime_error("failed to allocate command buffers!");
     
     return commandBuffer;
 }
 
 void CommandBuffer::FreeCommandBuffer(const VkCommandPool& commandPool) const
 {
-    vkFreeCommandBuffers(VulkanBase::device, commandPool, 1, &m_CommandBuffer);
+    vkFreeCommandBuffers(VulkanBase::m_Device, commandPool, 1, &m_CommandBuffer);
 }

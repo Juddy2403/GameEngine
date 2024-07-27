@@ -22,7 +22,7 @@ void Level::InitializeLevel(const VkCommandPool& commandPool, const glm::mat4& p
     m_3DUBOMatrixes.proj = projMatrix;
 
     m_2DUBOMatrixes.model = glm::mat4(1.f);
-    float aspectRatio = static_cast<float>(VulkanBase::swapChainExtent.width) / static_cast<float>(VulkanBase::swapChainExtent.height);
+    float aspectRatio = static_cast<float>(VulkanBase::m_SwapChainExtent.width) / static_cast<float>(VulkanBase::m_SwapChainExtent.height);
     glm::vec3 scaleFactors(1 / aspectRatio, 1, 1.0f);
     m_2DUBOMatrixes.view = glm::scale(glm::mat4(1.0f), scaleFactors);
 
@@ -36,12 +36,12 @@ void Level::InitializeLevel(const VkCommandPool& commandPool, const glm::mat4& p
     for (auto& mesh : m_3DMeshes)
     {
         mesh->MapBuffers();
-        mesh->UploadMesh(commandPool, VulkanBase::graphicsQueue);
+        mesh->UploadMesh(commandPool, VulkanBase::m_GraphicsQueue);
     }
     for (auto& mesh : m_2DMeshes)
     {
         mesh->MapBuffers();
-        mesh->UploadMesh(commandPool, VulkanBase::graphicsQueue);
+        mesh->UploadMesh(commandPool, VulkanBase::m_GraphicsQueue);
     }
 }
 
@@ -68,7 +68,7 @@ void Level::Draw2DMeshes(const VkCommandBuffer& commandBuffer, const uint32_t cu
 void Level::WindowHasBeenResized(const glm::mat4& projMatrix)
 {
     m_3DUBOMatrixes.proj = projMatrix;
-    float aspectRatio = static_cast<float>(VulkanBase::swapChainExtent.width) / static_cast<float>(VulkanBase::swapChainExtent.height);
+    float aspectRatio = static_cast<float>(VulkanBase::m_SwapChainExtent.width) / static_cast<float>(VulkanBase::m_SwapChainExtent.height);
     glm::vec3 scaleFactors(1 / aspectRatio, 1, 1.0f);
     m_2DUBOMatrixes.view = glm::scale(glm::mat4(1.0f), scaleFactors);
 }

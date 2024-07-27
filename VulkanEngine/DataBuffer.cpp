@@ -25,9 +25,9 @@ void DataBuffer::Map(const VkDeviceSize size, const void* data)
     CreateBuffer(size, VK_BUFFER_USAGE_TRANSFER_SRC_BIT, m_Properties, m_StagingBuffer, m_StagingBufferMemory);
 
     void* mappedData;
-    vkMapMemory(VulkanBase::device, m_StagingBufferMemory, 0, size, 0, &mappedData);
+    vkMapMemory(VulkanBase::m_Device, m_StagingBufferMemory, 0, size, 0, &mappedData);
     memcpy(mappedData, data, (size_t)size);
-    vkUnmapMemory(VulkanBase::device, m_StagingBufferMemory);
+    vkUnmapMemory(VulkanBase::m_Device, m_StagingBufferMemory);
 
     CreateBuffer(size, VK_BUFFER_USAGE_TRANSFER_DST_BIT | m_Usage, VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT, m_VkBuffer, m_VkBufferMemory);
     m_HasBeenMapped = true;
@@ -40,21 +40,21 @@ void DataBuffer::Upload(VkCommandPool const& commandPool, VkQueue const& graphic
 
     CopyBuffer(commandPool, graphicsQueue, m_StagingBuffer, m_VkBuffer, m_Size);
 
-    vkDestroyBuffer(VulkanBase::device, m_StagingBuffer, nullptr);
-    vkFreeMemory(VulkanBase::device, m_StagingBufferMemory, nullptr);
+    vkDestroyBuffer(VulkanBase::m_Device, m_StagingBuffer, nullptr);
+    vkFreeMemory(VulkanBase::m_Device, m_StagingBufferMemory, nullptr);
     m_HasBeenMapped = false;
 }
 
 void DataBuffer::Destroy() const
 {
-    vkDestroyBuffer(VulkanBase::device, m_VkBuffer, nullptr);
-    vkFreeMemory(VulkanBase::device, m_VkBufferMemory, nullptr);
+    vkDestroyBuffer(VulkanBase::m_Device, m_VkBuffer, nullptr);
+    vkFreeMemory(VulkanBase::m_Device, m_VkBufferMemory, nullptr);
 }
 
 uint32_t DataBuffer::FindMemoryType(const uint32_t typeFilter, const VkMemoryPropertyFlags properties)
 {
     VkPhysicalDeviceMemoryProperties memProperties;
-    vkGetPhysicalDeviceMemoryProperties(VulkanBase::physicalDevice, &memProperties);
+    vkGetPhysicalDeviceMemoryProperties(VulkanBase::m_PhysicalDevice, &memProperties);
 
     for (uint32_t i = 0; i < memProperties.memoryTypeCount; i++) if ((typeFilter & (1 << i)) && (memProperties.memoryTypes[i].propertyFlags & properties) == properties) return i;
 
@@ -69,19 +69,19 @@ void DataBuffer::CreateBuffer(const VkDeviceSize size, const VkBufferUsageFlags 
     bufferInfo.usage = usage;
     bufferInfo.sharingMode = VK_SHARING_MODE_EXCLUSIVE;
 
-    if (vkCreateBuffer(VulkanBase::device, &bufferInfo, nullptr, &buffer) != VK_SUCCESS) throw std::runtime_error("failed to create buffer!");
+    if (vkCreateBuffer(VulkanBase::m_Device, &bufferInfo, nullptr, &buffer) != VK_SUCCESS) throw std::runtime_error("failed to create buffer!");
 
     VkMemoryRequirements memRequirements;
-    vkGetBufferMemoryRequirements(VulkanBase::device, buffer, &memRequirements);
+    vkGetBufferMemoryRequirements(VulkanBase::m_Device, buffer, &memRequirements);
 
     VkMemoryAllocateInfo allocInfo{};
     allocInfo.sType = VK_STRUCTURE_TYPE_MEMORY_ALLOCATE_INFO;
     allocInfo.allocationSize = memRequirements.size;
     allocInfo.memoryTypeIndex = FindMemoryType(memRequirements.memoryTypeBits, properties);
 
-    if (vkAllocateMemory(VulkanBase::device, &allocInfo, nullptr, &bufferMemory) != VK_SUCCESS) throw std::runtime_error("failed to allocate buffer memory!");
+    if (vkAllocateMemory(VulkanBase::m_Device, &allocInfo, nullptr, &bufferMemory) != VK_SUCCESS) throw std::runtime_error("failed to allocate buffer memory!");
 
-    vkBindBufferMemory(VulkanBase::device, buffer, bufferMemory, 0); //0 is the offset in memory. If it's not 0 it needs to be divisible by memRequirements.alignment
+    vkBindBufferMemory(VulkanBase::m_Device, buffer, bufferMemory, 0); //0 is the offset in memory. If it's not 0 it needs to be divisible by memRequirements.alignment
 }
 
 void DataBuffer::CopyBuffer(VkCommandPool const& commandPool, VkQueue const& graphicsQueue, const VkBuffer srcBuffer,

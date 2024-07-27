@@ -11,7 +11,7 @@ VkCommandPool CommandPool::CreateCommandPool(const VkSurfaceKHR& surface, const 
     poolInfo.flags = flags;
     if (queueFamilyIndices.m_GraphicsFamily.has_value()) poolInfo.queueFamilyIndex = queueFamilyIndices.m_GraphicsFamily.value();
     else throw std::runtime_error("No queue family found!");
-    if (vkCreateCommandPool(VulkanBase::device, &poolInfo, nullptr, &commandPool) != VK_SUCCESS) throw std::runtime_error("failed to create command pool!");
+    if (vkCreateCommandPool(VulkanBase::m_Device, &poolInfo, nullptr, &commandPool) != VK_SUCCESS) throw std::runtime_error("failed to create command pool!");
     return commandPool;
 }
 
@@ -31,7 +31,7 @@ CommandPool& CommandPool::operator=(CommandPool&& other) noexcept
 
 void CommandPool::DestroyCommandPool() const
 {
-    vkDestroyCommandPool(VulkanBase::device, m_CommandPool, nullptr);
+    vkDestroyCommandPool(VulkanBase::m_Device, m_CommandPool, nullptr);
 }
 
 CommandPool::CommandPool(const VkSurfaceKHR& surface, const QueueFamilyIndices& queueFamilyIndices)

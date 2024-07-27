@@ -94,7 +94,7 @@ void GraphicsPipeline::CreateGraphicsPipeline(const VkRenderPass& renderPass, Sh
     pipelineInfo.basePipelineHandle = VK_NULL_HANDLE;
     pipelineInfo.pDepthStencilState = &depthStencil;
 
-    if (vkCreateGraphicsPipelines(VulkanBase::device, VK_NULL_HANDLE, 1, &pipelineInfo, nullptr, &m_GraphicsPipeline) != VK_SUCCESS)
+    if (vkCreateGraphicsPipelines(VulkanBase::m_Device, VK_NULL_HANDLE, 1, &pipelineInfo, nullptr, &m_GraphicsPipeline) != VK_SUCCESS)
     {
         throw std::runtime_error("failed to create graphics pipeline!");
     }
@@ -115,15 +115,15 @@ void GraphicsPipeline::CreatePipelineLayout()
     pipelineLayoutInfo.pushConstantRangeCount = 1; // Number of push constant ranges
     pipelineLayoutInfo.pPushConstantRanges = &pushConstantRange; // Array of push constant ranges
 
-    if (vkCreatePipelineLayout(VulkanBase::device, &pipelineLayoutInfo, nullptr, &m_PipelineLayout) != VK_SUCCESS) throw std::runtime_error("failed to create pipeline layout!");
+    if (vkCreatePipelineLayout(VulkanBase::m_Device, &pipelineLayoutInfo, nullptr, &m_PipelineLayout) != VK_SUCCESS) throw std::runtime_error("failed to create pipeline layout!");
 }
 
 void GraphicsPipeline::DestroyGraphicsPipeline() const
 {
-    vkDestroyPipeline(VulkanBase::device, m_GraphicsPipeline, nullptr);
+    vkDestroyPipeline(VulkanBase::m_Device, m_GraphicsPipeline, nullptr);
 }
 
 void GraphicsPipeline::DestroyGraphicsPipelineLayout()
 {
-    vkDestroyPipelineLayout(VulkanBase::device, m_PipelineLayout, nullptr);
+    vkDestroyPipelineLayout(VulkanBase::m_Device, m_PipelineLayout, nullptr);
 }

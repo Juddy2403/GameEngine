@@ -25,9 +25,9 @@ void Texture::CreateTextureImage(const VkCommandPool& commandPool, const std::st
         stagingBufferMemory);
 
     void* data;
-    vkMapMemory(VulkanBase::device, stagingBufferMemory, 0, imageSize, 0, &data);
+    vkMapMemory(VulkanBase::m_Device, stagingBufferMemory, 0, imageSize, 0, &data);
     memcpy(data, pixels, static_cast<size_t>(imageSize));
-    vkUnmapMemory(VulkanBase::device, stagingBufferMemory);
+    vkUnmapMemory(VulkanBase::m_Device, stagingBufferMemory);
 
     stbi_image_free(pixels);
 
@@ -45,8 +45,8 @@ void Texture::CreateTextureImage(const VkCommandPool& commandPool, const std::st
     CopyBufferToImage(stagingBuffer, m_TextureImage, static_cast<uint32_t>(texWidth), static_cast<uint32_t>(texHeight), commandPool);
     TransitionImageLayout(m_TextureImage, VK_FORMAT_R8G8B8A8_SRGB, VK_IMAGE_LAYOUT_TRANSFER_DST_OPTIMAL, VK_IMAGE_LAYOUT_SHADER_READ_ONLY_OPTIMAL, commandPool);
 
-    vkDestroyBuffer(VulkanBase::device, stagingBuffer, nullptr);
-    vkFreeMemory(VulkanBase::device, stagingBufferMemory, nullptr);
+    vkDestroyBuffer(VulkanBase::m_Device, stagingBuffer, nullptr);
+    vkFreeMemory(VulkanBase::m_Device, stagingBufferMemory, nullptr);
 
     CreateTextureImageView();
 }
@@ -68,19 +68,19 @@ void Texture::CreateImage(const ImageInfoStruct& imageInfo, VkImage& image, VkDe
     vkImageCreateInfo.samples = VK_SAMPLE_COUNT_1_BIT;
     vkImageCreateInfo.sharingMode = VK_SHARING_MODE_EXCLUSIVE;
 
-    if (vkCreateImage(VulkanBase::device, &vkImageCreateInfo, nullptr, &image) != VK_SUCCESS) throw std::runtime_error("failed to create image!");
+    if (vkCreateImage(VulkanBase::m_Device, &vkImageCreateInfo, nullptr, &image) != VK_SUCCESS) throw std::runtime_error("failed to create image!");
 
     VkMemoryRequirements memRequirements;
-    vkGetImageMemoryRequirements(VulkanBase::device, image, &memRequirements);
+    vkGetImageMemoryRequirements(VulkanBase::m_Device, image, &memRequirements);
 
     VkMemoryAllocateInfo allocInfo{};
     allocInfo.sType = VK_STRUCTURE_TYPE_MEMORY_ALLOCATE_INFO;
     allocInfo.allocationSize = memRequirements.size;
     allocInfo.memoryTypeIndex = DataBuffer::FindMemoryType(memRequirements.memoryTypeBits, imageInfo.properties);
 
-    if (vkAllocateMemory(VulkanBase::device, &allocInfo, nullptr, &imageMemory) != VK_SUCCESS) throw std::runtime_error("failed to allocate image memory!");
+    if (vkAllocateMemory(VulkanBase::m_Device, &allocInfo, nullptr, &imageMemory) != VK_SUCCESS) throw std::runtime_error("failed to allocate image memory!");
 
-    vkBindImageMemory(VulkanBase::device, image, imageMemory, 0);
+    vkBindImageMemory(VulkanBase::m_Device, image, imageMemory, 0);
 }
 
 //TODO: All of the helper functions that submit commands so far have been set up to execute synchronously by waiting for
@@ -187,9 +187,9 @@ void Texture::CopyBufferToImage(const VkBuffer buffer, const VkImage image, cons
 
 void Texture::DestroyTexture() const
 {
-    vkDestroyImageView(VulkanBase::device, m_TextureImageView, nullptr);
-    vkDestroyImage(VulkanBase::device, m_TextureImage, nullptr);
-    vkFreeMemory(VulkanBase::device, m_TextureImageMemory, nullptr);
+    vkDestroyImageView(VulkanBase::m_Device, m_TextureImageView, nullptr);
+    vkDestroyImage(VulkanBase::m_Device, m_TextureImage, nullptr);
+    vkFreeMemory(VulkanBase::m_Device, m_TextureImageMemory, nullptr);
 }
 
 void Texture::CreateTextureImageView()
@@ -208,7 +208,7 @@ void Texture::CreateTextureSampler()
     samplerInfo.addressModeW = VK_SAMPLER_ADDRESS_MODE_REPEAT;
 
     VkPhysicalDeviceProperties properties{};
-    vkGetPhysicalDeviceProperties(VulkanBase::physicalDevice, &properties);
+    vkGetPhysicalDeviceProperties(VulkanBase::m_PhysicalDevice, &properties);
 
     samplerInfo.anisotropyEnable = VK_TRUE;
     samplerInfo.maxAnisotropy = properties.limits.maxSamplerAnisotropy;
@@ -221,7 +221,7 @@ void Texture::CreateTextureSampler()
     samplerInfo.minLod = 0.0f;
     samplerInfo.maxLod = 0.0f;
 
-    if (vkCreateSampler(VulkanBase::device, &samplerInfo, nullptr, &m_TextureSampler) != VK_SUCCESS)
+    if (vkCreateSampler(VulkanBase::m_Device, &samplerInfo, nullptr, &m_TextureSampler) != VK_SUCCESS)
     {
         throw std::runtime_error("failed to create texture sampler!");
     }
@@ -229,7 +229,7 @@ void Texture::CreateTextureSampler()
 
 void Texture::DestroyTextureSampler()
 {
-    vkDestroySampler(VulkanBase::device, m_TextureSampler, nullptr);
+    vkDestroySampler(VulkanBase::m_Device, m_TextureSampler, nullptr);
 }
 
 bool Texture::operator==(const Texture& rhs) const

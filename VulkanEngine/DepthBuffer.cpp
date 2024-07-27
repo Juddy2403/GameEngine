@@ -7,8 +7,8 @@ void DepthBuffer::CreateDepthResources()
     const VkFormat depthFormat = FindDepthFormat();
 
     ImageInfoStruct imageInfo;
-    imageInfo.width = VulkanBase::swapChainExtent.width;
-    imageInfo.height = VulkanBase::swapChainExtent.height;
+    imageInfo.width = VulkanBase::m_SwapChainExtent.width;
+    imageInfo.height = VulkanBase::m_SwapChainExtent.height;
     imageInfo.format = depthFormat;
     imageInfo.tiling = VK_IMAGE_TILING_OPTIMAL;
     imageInfo.usage = VK_IMAGE_USAGE_DEPTH_STENCIL_ATTACHMENT_BIT;
@@ -23,7 +23,7 @@ VkFormat DepthBuffer::FindSupportedFormat(const std::vector<VkFormat>& candidate
     for (const VkFormat format : candidates)
     {
         VkFormatProperties props;
-        vkGetPhysicalDeviceFormatProperties(VulkanBase::physicalDevice, format, &props);
+        vkGetPhysicalDeviceFormatProperties(VulkanBase::m_PhysicalDevice, format, &props);
         if (tiling == VK_IMAGE_TILING_LINEAR && (props.linearTilingFeatures & features) == features) return format;
         if (tiling == VK_IMAGE_TILING_OPTIMAL && (props.optimalTilingFeatures & features) == features) return format;
     }
@@ -42,7 +42,7 @@ bool DepthBuffer::HasStencilComponent(const VkFormat format)
 
 void DepthBuffer::DestroyDepthResources() const
 {
-    vkDestroyImageView(VulkanBase::device, m_DepthImageView, nullptr);
-    vkDestroyImage(VulkanBase::device, m_DepthImage, nullptr);
-    vkFreeMemory(VulkanBase::device, m_DepthImageMemory, nullptr);
+    vkDestroyImageView(VulkanBase::m_Device, m_DepthImageView, nullptr);
+    vkDestroyImage(VulkanBase::m_Device, m_DepthImage, nullptr);
+    vkFreeMemory(VulkanBase::m_Device, m_DepthImageMemory, nullptr);
 }

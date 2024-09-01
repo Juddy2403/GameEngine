@@ -18,6 +18,93 @@ void VulkanBase::WindowResized(GLFWwindow* window, const int width, const int he
     m_HasWindowResized = true;
 }
 
+void VulkanBase::InitVulkan()
+{
+    CreateInstance();
+    SetupDebugMessenger();
+    CreateSurface();
+
+    PickPhysicalDevice();
+    CreateLogicalDevice();
+
+    m_SwapChain.CreateSwapChain(m_Surface, m_Window, FindQueueFamilies(m_PhysicalDevice));
+    m_SwapChain.GetImageView().CreateImageViews();
+
+    m_3DShader.Initialize();
+    m_2DShader.Initialize();
+    m_RenderPass.CreateRenderPass(m_SwapChain.GetImageView().m_SwapChainImageFormat);
+    Shader::CreateDescriptor();
+    GraphicsPipeline::CreatePipelineLayout();
+
+    m_3DGraphicsPipeline.CreateGraphicsPipeline(m_RenderPass.GetRenderPass(), m_3DShader, Vertex3D::CreateVertexInputStateInfo());
+    m_2DGraphicsPipeline.CreateGraphicsPipeline(m_RenderPass.GetRenderPass(), m_2DShader, Vertex2D::CreateVertexInputStateInfo(), false);
+    m_RenderPass.CreateFrameBuffers(m_SwapChain.GetImageView().m_SwapChainImageViews, m_SwapChainExtent);
+    m_Camera.Initialize(45.f, { 0.f,0.f,-2.f }, static_cast<float>(m_SwapChainExtent.width) / static_cast<float>(m_SwapChainExtent.height));
+
+    m_CommandPool = CommandPool{ m_Surface,FindQueueFamilies(m_PhysicalDevice) };
+    m_CommandBuffer = CommandBuffer{ m_CommandPool.GetCommandPool() };
+    m_Level.InitializeLevel(m_CommandPool.GetCommandPool(), m_Camera.m_ProjectionMatrix);
+
+    CreateSyncObjects();
+}
+void VulkanBase::MainLoop()
+{
+    while (!glfwWindowShouldClose(m_Window))
+    {
+        glfwPollEvents();
+        ProcessInput();
+        TimeManager::GetInstance().Update();
+        if (m_HasWindowResized)
+        {
+            vkDeviceWaitIdle(m_Device);
+            m_SwapChain.DestroySwapChain();
+            m_SwapChain.CreateSwapChain(m_Surface, m_Window, FindQueueFamilies(m_PhysicalDevice));
+            m_SwapChain.GetImageView().CreateImageViews();
+            m_RenderPass.DestroyRenderPass();
+            m_RenderPass.CreateRenderPass(m_SwapChain.GetImageView().m_SwapChainImageFormat);
+            m_Camera.CalculateProjectionMatrix(static_cast<float>(m_Width) / static_cast<float>(m_Height));
+            m_Level.WindowHasBeenResized(m_Camera.m_ProjectionMatrix);
+            m_RenderPass.CreateFrameBuffers(m_SwapChain.GetImageView().m_SwapChainImageViews, m_SwapChainExtent);
+            m_HasWindowResized = false;
+        }
+        m_Camera.Update();
+        DrawFrame();
+    }
+    vkDeviceWaitIdle(m_Device);
+}
+void VulkanBase::Cleanup() const
+{
+    for (size_t i = 0; i < m_SwapChain.GetImageView().m_SwapChainImages.size(); i++)
+    {
+        vkDestroySemaphore(m_Device, m_RenderFinishedSemaphores[i], nullptr);
+        vkDestroySemaphore(m_Device, m_ImageAvailableSemaphores[i], nullptr);
+        vkDestroyFence(m_Device, m_InFlightFences[i], nullptr);
+    }
+
+    m_CommandPool.DestroyCommandPool();
+
+    m_3DGraphicsPipeline.DestroyGraphicsPipeline();
+    m_2DGraphicsPipeline.DestroyGraphicsPipeline();
+    GraphicsPipeline::DestroyGraphicsPipelineLayout();
+    Shader::DestroyDescriptorSetLayout();
+    m_RenderPass.DestroyRenderPass();
+
+    if (enableValidationLayers) DestroyDebugUtilsMessengerEXT(m_Instance, m_DebugMessenger, nullptr);
+    m_SwapChain.DestroySwapChain();
+
+    m_Level.DestroyLevel();
+    vkDestroyDevice(m_Device, nullptr);
+
+    vkDestroySurfaceKHR(m_Instance, m_Surface, nullptr);
+    vkDestroyInstance(m_Instance, nullptr);
+
+    glfwDestroyWindow(m_Window);
+    glfwTerminate();
+}
+void VulkanBase::CreateSurface()
+{
+    if (glfwCreateWindowSurface(m_Instance, m_Window, nullptr, &m_Surface) != VK_SUCCESS) throw std::runtime_error("failed to create window surface!");
+}
 void VulkanBase::InitWindow()
 {
     glfwInit();
@@ -47,16 +134,8 @@ void VulkanBase::InitWindow()
 
 void VulkanBase::KeyEvent(const int key, int scancode, const int action, int mods)
 {
-    if (action == GLFW_PRESS)
-    {
-        // Add the pressed key to the set
-        m_PressedKeys.insert(key);
-    }
-    else if (action == GLFW_RELEASE)
-    {
-        // Remove the released key from the set
-        m_PressedKeys.erase(key);
-    }
+    if (action == GLFW_PRESS) m_PressedKeys.insert(key);
+    else if (action == GLFW_RELEASE) m_PressedKeys.erase(key);
 
     if (key == GLFW_KEY_N && action == GLFW_PRESS)
     {
@@ -101,16 +180,19 @@ void VulkanBase::MouseMove(GLFWwindow* window, double xpos, double ypos)
     {
         const float dx = m_LastMousePos.x - static_cast<float>(xpos);
         const float dy = m_LastMousePos.y - static_cast<float>(ypos);
-
-        if (dx != 0.f)
-            m_Camera.m_TotalYaw -= m_Camera.m_RotationSpeed * TimeManager::GetInstance().GetElapsed() * dx;
-        if (m_Camera.m_TotalYaw > 360.f)
-            m_Camera.m_TotalYaw -= 360.f;
-        if (m_Camera.m_TotalYaw < -360.f)
-            m_Camera.m_TotalYaw += 360.f;
+        std::cout << dx << " " << dy << std::endl;
+        if (dx != 0.f) m_Camera.m_TotalYaw -= m_Camera.m_RotationSpeed * TimeManager::GetInstance().GetElapsed() * dx;
         if (dy != 0.f)
-            m_Camera.m_TotalPitch -= m_Camera.m_RotationSpeed * TimeManager::GetInstance().GetElapsed() * dy;
-        m_Camera.m_TotalPitch = std::clamp(m_Camera.m_TotalPitch, -60.f, 60.f);
+        {
+            auto totalPitch = m_Camera.m_TotalPitch - m_Camera.m_RotationSpeed * TimeManager::GetInstance().GetElapsed() * dy;
+            if (totalPitch > -60.f && totalPitch < 60.f) m_Camera.m_TotalPitch = totalPitch;
+            m_Camera.m_TotalPitch = std::clamp(m_Camera.m_TotalPitch, -60.f, 60.f);
+            //std::cout<<m_Camera.m_TotalPitch<<std::endl;
+            // m_Camera.m_TotalPitch -= m_Camera.m_RotationSpeed * TimeManager::GetInstance().GetElapsed() * dy;
+        }
+        if (m_Camera.m_TotalYaw > 360.f) m_Camera.m_TotalYaw -= 360.f;
+        if (m_Camera.m_TotalYaw < -360.f) m_Camera.m_TotalYaw += 360.f;
+        // m_Camera.m_TotalPitch = std::clamp(m_Camera.m_TotalPitch, -60.f, 60.f);
     }
     m_LastMousePos = { xpos,ypos };
 }
@@ -190,7 +272,7 @@ QueueFamilyIndices VulkanBase::FindQueueFamilies(const VkPhysicalDevice vkDevice
     return indices;
 }
 
-void VulkanBase::PickPhysicalDevice()
+void VulkanBase::PickPhysicalDevice() const
 {
     uint32_t deviceCount = 0;
     vkEnumeratePhysicalDevices(m_Instance, &deviceCount, nullptr);
@@ -211,10 +293,7 @@ void VulkanBase::PickPhysicalDevice()
         }
     }
 
-    if (m_PhysicalDevice == VK_NULL_HANDLE)
-    {
-        throw std::runtime_error("failed to find a suitable GPU!");
-    }
+    if (m_PhysicalDevice == VK_NULL_HANDLE) throw std::runtime_error("failed to find a suitable GPU!");
 }
 
 bool VulkanBase::IsDeviceSuitable(const VkPhysicalDevice device) const
@@ -299,6 +378,10 @@ void VulkanBase::SetupDebugMessenger()
 
 void VulkanBase::CreateSyncObjects()
 {
+    m_ImageAvailableSemaphores.resize(m_SwapChain.GetImageView().m_SwapChainImages.size());
+    m_RenderFinishedSemaphores.resize(m_SwapChain.GetImageView().m_SwapChainImages.size());
+    m_InFlightFences.resize(m_SwapChain.GetImageView().m_SwapChainImages.size());
+
     VkSemaphoreCreateInfo semaphoreInfo{};
     semaphoreInfo.sType = VK_STRUCTURE_TYPE_SEMAPHORE_CREATE_INFO;
 
@@ -306,21 +389,41 @@ void VulkanBase::CreateSyncObjects()
     fenceInfo.sType = VK_STRUCTURE_TYPE_FENCE_CREATE_INFO;
     fenceInfo.flags = VK_FENCE_CREATE_SIGNALED_BIT;
 
-    if (vkCreateSemaphore(m_Device, &semaphoreInfo, nullptr, &m_ImageAvailableSemaphore) != VK_SUCCESS ||
-        vkCreateSemaphore(m_Device, &semaphoreInfo, nullptr, &m_RenderFinishedSemaphore) != VK_SUCCESS ||
-        vkCreateFence(m_Device, &fenceInfo, nullptr, &m_InFlightFence) != VK_SUCCESS)
+    for (size_t i = 0; i < m_SwapChain.GetImageView().m_SwapChainImages.size(); i++)
     {
-        throw std::runtime_error("failed to create synchronization objects for a frame!");
+        if (vkCreateSemaphore(m_Device, &semaphoreInfo, nullptr, &m_ImageAvailableSemaphores[i]) != VK_SUCCESS ||
+            vkCreateSemaphore(m_Device, &semaphoreInfo, nullptr, &m_RenderFinishedSemaphores[i]) != VK_SUCCESS ||
+            vkCreateFence(m_Device, &fenceInfo, nullptr, &m_InFlightFences[i]) != VK_SUCCESS)
+        {
+            throw std::runtime_error("failed to create synchronization objects for a frame!");
+        }
     }
+
+    // VkSemaphoreCreateInfo semaphoreInfo{};
+    // semaphoreInfo.sType = VK_STRUCTURE_TYPE_SEMAPHORE_CREATE_INFO;
+    //
+    // VkFenceCreateInfo fenceInfo{};
+    // fenceInfo.sType = VK_STRUCTURE_TYPE_FENCE_CREATE_INFO;
+    // fenceInfo.flags = VK_FENCE_CREATE_SIGNALED_BIT;
+    //
+    // if (vkCreateSemaphore(m_Device, &semaphoreInfo, nullptr, &m_ImageAvailableSemaphore) != VK_SUCCESS ||
+    //     vkCreateSemaphore(m_Device, &semaphoreInfo, nullptr, &m_RenderFinishedSemaphore) != VK_SUCCESS ||
+    //     vkCreateFence(m_Device, &fenceInfo, nullptr, &m_InFlightFence) != VK_SUCCESS)
+    // {
+    //     throw std::runtime_error("failed to create synchronization objects for a frame!");
+    // }
 }
 
 void VulkanBase::DrawFrame()
 {
-    vkWaitForFences(m_Device, 1, &m_InFlightFence, VK_TRUE, UINT64_MAX);
-    vkResetFences(m_Device, 1, &m_InFlightFence);
+    vkWaitForFences(m_Device, 1, &m_InFlightFences[m_CurrentFrame], VK_TRUE, UINT64_MAX);
+    vkResetFences(m_Device, 1, &m_InFlightFences[m_CurrentFrame]);
 
-    uint32_t imageIndex;
-    vkAcquireNextImageKHR(m_Device, m_SwapChain.GetSwapChain(), UINT64_MAX, m_ImageAvailableSemaphore, VK_NULL_HANDLE, &imageIndex);
+    static uint32_t imageIndex;
+    if(vkAcquireNextImageKHR(m_Device, m_SwapChain.GetSwapChain(), UINT64_MAX, m_ImageAvailableSemaphores[m_CurrentFrame], VK_NULL_HANDLE, &imageIndex) != VK_SUCCESS)
+        throw std::runtime_error("failed to acquire swap chain image!");
+    // Ensure imageIndex is within the bounds of MAX_FRAMES_IN_FLIGHT
+    imageIndex = imageIndex % MAX_FRAMES_IN_FLIGHT;
 
     m_CommandBuffer.Reset();
     m_CommandBuffer.BeginRecording();
@@ -332,31 +435,29 @@ void VulkanBase::DrawFrame()
     m_CommandBuffer.EndRecording();
 
     VkSubmitInfo submitInfo{};
-    const VkSemaphore waitSemaphores[] = { m_ImageAvailableSemaphore };
+    const VkSemaphore waitSemaphores[] = { m_ImageAvailableSemaphores[m_CurrentFrame] };
     constexpr VkPipelineStageFlags waitStages[] = { VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT };
     submitInfo.waitSemaphoreCount = 1;
     submitInfo.pWaitSemaphores = waitSemaphores;
     submitInfo.pWaitDstStageMask = waitStages;
 
-    const VkSemaphore signalSemaphores[] = { m_RenderFinishedSemaphore };
+    const VkSemaphore signalSemaphores[] = { m_RenderFinishedSemaphores[m_CurrentFrame] };
     submitInfo.signalSemaphoreCount = 1;
     submitInfo.pSignalSemaphores = signalSemaphores;
 
-    m_CommandBuffer.Submit(submitInfo, m_InFlightFence);
+    m_CommandBuffer.Submit(submitInfo, m_InFlightFences[m_CurrentFrame]);
 
     VkPresentInfoKHR presentInfo{};
     presentInfo.sType = VK_STRUCTURE_TYPE_PRESENT_INFO_KHR;
-
     presentInfo.waitSemaphoreCount = 1;
     presentInfo.pWaitSemaphores = signalSemaphores;
-
     const VkSwapchainKHR swapChains[] = { m_SwapChain.GetSwapChain() };
     presentInfo.swapchainCount = 1;
     presentInfo.pSwapchains = swapChains;
-
     presentInfo.pImageIndices = &imageIndex;
-
+    
     vkQueuePresentKHR(m_PresentQueue, &presentInfo);
+    m_CurrentFrame = (m_CurrentFrame + 1) % m_SwapChain.GetImageView().m_SwapChainImages.size();
 }
 
 bool CheckValidationLayerSupport()

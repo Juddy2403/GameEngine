@@ -25,10 +25,10 @@ void Mesh3D::Update(const uint32_t currentFrame, UniformBufferObject ubo)
     m_DescriptorPool.UpdateUniformBuffer(currentFrame, ubo);
 }
 
-void Mesh3D::UploadMesh(const VkCommandPool& commandPool, const VkQueue& graphicsQueue) const
+void Mesh3D::MapAndUploadMesh(const VkCommandPool& commandPool, const VkQueue& graphicsQueue) const
 {
-    m_VertexBuffer->Upload(commandPool, graphicsQueue);
-    m_IndexBuffer->Upload(commandPool, graphicsQueue);
+    m_VertexBuffer->MapAndUpload(m_Vertices.size() * sizeof(m_Vertices[0]), m_Vertices.data(), commandPool, graphicsQueue);
+    m_IndexBuffer->MapAndUpload(m_Indices.size() * sizeof(m_Indices[0]), m_Indices.data(), commandPool, graphicsQueue);
 }
 
 void Mesh3D::AddVertex(const Vertex3D& vertex)
@@ -41,12 +41,6 @@ void Mesh3D::AddVertex(const Vertex3D& vertex)
     m_Indices.push_back(m_UniqueVertices[vertex]);
 }
 
-void Mesh3D::MapBuffers() const
-{
-    m_VertexBuffer->Map(m_Vertices.size() * sizeof(m_Vertices[0]), m_Vertices.data());
-    m_IndexBuffer->Map(m_Indices.size() * sizeof(m_Indices[0]), m_Indices.data());
-}
-
 void Mesh3D::Draw(const VkCommandBuffer& commandBuffer, const uint32_t currentFrame) const
 {
     m_VertexBuffer->BindAsVertexBuffer(commandBuffer);
@@ -54,7 +48,6 @@ void Mesh3D::Draw(const VkCommandBuffer& commandBuffer, const uint32_t currentFr
 
     if (Level::m_AreNormalsEnabled == 1) vkCmdPushConstants(commandBuffer, GraphicsPipeline::GetPipelineLayout(), VK_SHADER_STAGE_FRAGMENT_BIT, sizeof(glm::vec3), sizeof(int), &m_TextureManager.m_HasNormalMap);
     else vkCmdPushConstants(commandBuffer, GraphicsPipeline::GetPipelineLayout(), VK_SHADER_STAGE_FRAGMENT_BIT, sizeof(glm::vec3), sizeof(int), &Level::m_AreNormalsEnabled);
-
     vkCmdPushConstants(commandBuffer, GraphicsPipeline::GetPipelineLayout(), VK_SHADER_STAGE_FRAGMENT_BIT, sizeof(glm::vec3) + sizeof(int) * 2, sizeof(int), &m_DoesHavePBRMaterial);
 
     vkCmdBindDescriptorSets(commandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, GraphicsPipeline::GetPipelineLayout(), 0, 1, &m_DescriptorPool.GetDescriptorSets()[currentFrame], 0, nullptr);

@@ -19,30 +19,21 @@ void DataBuffer::BindAsIndexBuffer(const VkCommandBuffer commandBuffer) const
     vkCmdBindIndexBuffer(commandBuffer, m_VkBuffer, 0, VK_INDEX_TYPE_UINT32);
 }
 
-void DataBuffer::Map(const VkDeviceSize size, const void* data)
+void DataBuffer::MapAndUpload(const VkDeviceSize size, const void* data, VkCommandPool const& commandPool, VkQueue const& graphicsQueue)
 {
     m_Size = size;
     CreateBuffer(size, VK_BUFFER_USAGE_TRANSFER_SRC_BIT, m_Properties, m_StagingBuffer, m_StagingBufferMemory);
 
     void* mappedData;
     vkMapMemory(VulkanBase::m_Device, m_StagingBufferMemory, 0, size, 0, &mappedData);
-    memcpy(mappedData, data, (size_t)size);
+    memcpy(mappedData, data, size);
     vkUnmapMemory(VulkanBase::m_Device, m_StagingBufferMemory);
 
     CreateBuffer(size, VK_BUFFER_USAGE_TRANSFER_DST_BIT | m_Usage, VK_MEMORY_PROPERTY_DEVICE_LOCAL_BIT, m_VkBuffer, m_VkBufferMemory);
-    m_HasBeenMapped = true;
-}
-
-void DataBuffer::Upload(VkCommandPool const& commandPool, VkQueue const& graphicsQueue)
-{
-    if (!m_HasBeenMapped)
-        throw std::runtime_error("DataBuffer::Upload: DataBuffer has not been mapped");
 
     CopyBuffer(commandPool, graphicsQueue, m_StagingBuffer, m_VkBuffer, m_Size);
-
     vkDestroyBuffer(VulkanBase::m_Device, m_StagingBuffer, nullptr);
     vkFreeMemory(VulkanBase::m_Device, m_StagingBufferMemory, nullptr);
-    m_HasBeenMapped = false;
 }
 
 void DataBuffer::Destroy() const

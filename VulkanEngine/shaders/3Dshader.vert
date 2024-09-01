@@ -20,12 +20,14 @@ layout(location = 4) out vec3 fragPosition;
 
 void main() {
     gl_Position = ubo.proj * ubo.view * ubo.model * vec4(inPosition, 1.0);
+    fragPosition = gl_Position.xyz; // interpolation of position attribute in fragment shader.
+    
     vec4 tNormal =  ubo.model*vec4(inNormal,0);
     fragNormal = normalize(tNormal.xyz); // interpolation of normal attribute in fragment shader.
+    
     fragColor = inColor; // interpolation of color attribute in fragment shader.
     fragTexCoord = inTexCoord; // interpolation of texCoord attribute in fragment shader.
-    //fragTangent = normalize(ubo.model*inTangent); // interpolation of tangent attribute in fragment shader.
+    
     vec4 tan =  ubo.model*vec4(inTangent,0);
     fragTangent = normalize(tan.xyz); // interpolation of normal attribute in fragment shader.
-    fragPosition = gl_Position.xyz; // interpolation of position attribute in fragment shader.
 }

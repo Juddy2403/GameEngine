@@ -33,16 +33,8 @@ void Level::InitializeLevel(const VkCommandPool& commandPool, const glm::mat4& p
     m_3DMeshes.shrink_to_fit();
     m_2DMeshes.shrink_to_fit();
 
-    for (auto& mesh : m_3DMeshes)
-    {
-        mesh->MapBuffers();
-        mesh->UploadMesh(commandPool, VulkanBase::m_GraphicsQueue);
-    }
-    for (auto& mesh : m_2DMeshes)
-    {
-        mesh->MapBuffers();
-        mesh->UploadMesh(commandPool, VulkanBase::m_GraphicsQueue);
-    }
+    for (auto& mesh : m_3DMeshes) mesh->MapAndUploadMesh(commandPool, VulkanBase::m_GraphicsQueue);
+    for (auto& mesh : m_2DMeshes) mesh->MapAndUploadMesh(commandPool, VulkanBase::m_GraphicsQueue);
 }
 
 void Level::DestroyLevel() const

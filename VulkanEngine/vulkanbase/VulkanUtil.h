@@ -16,7 +16,7 @@ namespace VulkanEngine
     constexpr bool enableValidationLayers = true;
     #endif
     
-    constexpr uint32_t MAX_FRAMES_IN_FLIGHT = 3;
+    constexpr uint32_t MAX_FRAMES_IN_FLIGHT = 2;
 
     VkResult CreateDebugUtilsMessengerEXT(VkInstance instance, const VkDebugUtilsMessengerCreateInfoEXT* pCreateInfo, const VkAllocationCallbacks* pAllocator, VkDebugUtilsMessengerEXT* pDebugMessenger);
     void DestroyDebugUtilsMessengerEXT(VkInstance instance, VkDebugUtilsMessengerEXT debugMessenger, const VkAllocationCallbacks* pAllocator);

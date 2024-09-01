@@ -54,93 +54,10 @@ namespace VulkanEngine
         static VkExtent2D m_SwapChainExtent;
         static VkQueue m_GraphicsQueue;
     private:
-        void InitVulkan()
-        {
-            CreateInstance();
-            SetupDebugMessenger();
-            CreateSurface();
-
-            PickPhysicalDevice();
-            CreateLogicalDevice();
-
-            m_SwapChain.CreateSwapChain(m_Surface, m_Window, FindQueueFamilies(m_PhysicalDevice));
-            m_SwapChain.GetImageView().CreateImageViews();
-
-            m_3DShader.Initialize();
-            m_2DShader.Initialize();
-            m_RenderPass.CreateRenderPass(m_SwapChain.GetImageView().m_SwapChainImageFormat);
-            Shader::CreateDescriptor();
-            GraphicsPipeline::CreatePipelineLayout();
-
-            m_3DGraphicsPipeline.CreateGraphicsPipeline(m_RenderPass.GetRenderPass(), m_3DShader, Vertex3D::CreateVertexInputStateInfo());
-            m_2DGraphicsPipeline.CreateGraphicsPipeline(m_RenderPass.GetRenderPass(), m_2DShader, Vertex2D::CreateVertexInputStateInfo(), false);
-            m_RenderPass.CreateFrameBuffers(m_SwapChain.GetImageView().m_SwapChainImageViews, m_SwapChainExtent);
-            m_Camera.Initialize(45.f, { 0.f,0.f,-2.f }, static_cast<float>(m_SwapChainExtent.width) / static_cast<float>(m_SwapChainExtent.height));
-
-            m_CommandPool = CommandPool{ m_Surface,FindQueueFamilies(m_PhysicalDevice) };
-            m_CommandBuffer = CommandBuffer{ m_CommandPool.GetCommandPool() };
-            m_Level.InitializeLevel(m_CommandPool.GetCommandPool(), m_Camera.m_ProjectionMatrix);
-
-            CreateSyncObjects();
-        }
-
-        void MainLoop()
-        {
-            while (!glfwWindowShouldClose(m_Window))
-            {
-                glfwPollEvents();
-                ProcessInput();
-                TimeManager::GetInstance().Update();
-                if (m_HasWindowResized)
-                {
-                    vkDeviceWaitIdle(m_Device);
-                    m_SwapChain.DestroySwapChain();
-                    m_SwapChain.CreateSwapChain(m_Surface, m_Window, FindQueueFamilies(m_PhysicalDevice));
-                    m_SwapChain.GetImageView().CreateImageViews();
-                    m_RenderPass.DestroyRenderPass();
-                    m_RenderPass.CreateRenderPass(m_SwapChain.GetImageView().m_SwapChainImageFormat);
-                    m_Camera.CalculateProjectionMatrix(static_cast<float>(m_Width) / static_cast<float>(m_Height));
-                    m_Level.WindowHasBeenResized(m_Camera.m_ProjectionMatrix);
-                    m_RenderPass.CreateFrameBuffers(m_SwapChain.GetImageView().m_SwapChainImageViews, m_SwapChainExtent);
-                    m_HasWindowResized = false;
-                }
-                m_Camera.Update();
-                DrawFrame();
-            }
-            vkDeviceWaitIdle(m_Device);
-        }
-
-        void Cleanup() const
-        {
-            vkDestroySemaphore(m_Device, m_RenderFinishedSemaphore, nullptr);
-            vkDestroySemaphore(m_Device, m_ImageAvailableSemaphore, nullptr);
-            vkDestroyFence(m_Device, m_InFlightFence, nullptr);
-
-            m_CommandPool.DestroyCommandPool();
-
-            m_3DGraphicsPipeline.DestroyGraphicsPipeline();
-            m_2DGraphicsPipeline.DestroyGraphicsPipeline();
-            GraphicsPipeline::DestroyGraphicsPipelineLayout();
-            Shader::DestroyDescriptorSetLayout();
-            m_RenderPass.DestroyRenderPass();
-
-            if (enableValidationLayers) DestroyDebugUtilsMessengerEXT(m_Instance, m_DebugMessenger, nullptr);
-            m_SwapChain.DestroySwapChain();
-
-            m_Level.DestroyLevel();
-            vkDestroyDevice(m_Device, nullptr);
-
-            vkDestroySurfaceKHR(m_Instance, m_Surface, nullptr);
-            vkDestroyInstance(m_Instance, nullptr);
-
-            glfwDestroyWindow(m_Window);
-            glfwTerminate();
-        }
-
-        void CreateSurface()
-        {
-            if (glfwCreateWindowSurface(m_Instance, m_Window, nullptr, &m_Surface) != VK_SUCCESS) throw std::runtime_error("failed to create window surface!");
-        }
+        void InitVulkan();
+        void MainLoop();
+        void Cleanup() const;
+        void CreateSurface();
 
         ShadingMode m_ShadingMode = ShadingMode::combinedMode;
         static uint32_t m_Width;
@@ -169,19 +86,17 @@ namespace VulkanEngine
         void DrawFrame(uint32_t imageIndex);
         SwapChain m_SwapChain{};
         VkQueue m_PresentQueue = VK_NULL_HANDLE;
-        void PickPhysicalDevice();
+        void PickPhysicalDevice() const;
         bool IsDeviceSuitable(VkPhysicalDevice device) const;
         void CreateLogicalDevice();
 
-        // Main initialization
         VkInstance m_Instance = VK_NULL_HANDLE;
         VkDebugUtilsMessengerEXT m_DebugMessenger = VK_NULL_HANDLE;
-
         VkSurfaceKHR m_Surface = VK_NULL_HANDLE;
-
-        VkSemaphore m_ImageAvailableSemaphore = VK_NULL_HANDLE;
-        VkSemaphore m_RenderFinishedSemaphore = VK_NULL_HANDLE;
-        VkFence m_InFlightFence = VK_NULL_HANDLE;
+        std::vector<VkSemaphore> m_ImageAvailableSemaphores;
+        std::vector<VkSemaphore> m_RenderFinishedSemaphores;
+        std::vector<VkFence> m_InFlightFences;
+        size_t m_CurrentFrame = 0;
 
         static void PopulateDebugMessengerCreateInfo(VkDebugUtilsMessengerCreateInfoEXT& createInfo);
         void SetupDebugMessenger();
@@ -191,17 +106,17 @@ namespace VulkanEngine
         void CreateSyncObjects();
         void DrawFrame();
 
-        static VKAPI_ATTR VkBool32 VKAPI_CALL DebugCallback(VkDebugUtilsMessageSeverityFlagBitsEXT messageSeverity, VkDebugUtilsMessageTypeFlagsEXT messageType
-            , const VkDebugUtilsMessengerCallbackDataEXT* pCallbackData, void* pUserData)
-        {
-            std::cerr << "validation layer: " << pCallbackData->pMessage << std::endl;
-            return VK_FALSE;
-        }
-
         void KeyEvent(int key, int scancode, int action, int mods);
         void MouseMove(GLFWwindow* window, double xpos, double ypos);
         void MouseEvent(GLFWwindow* window, int button, int action, int mods);
         void ProcessInput();
         static void WindowResized(GLFWwindow* window, int width, int height);
+
+        static VKAPI_ATTR VkBool32 VKAPI_CALL DebugCallback(VkDebugUtilsMessageSeverityFlagBitsEXT messageSeverity, VkDebugUtilsMessageTypeFlagsEXT messageType
+            , const VkDebugUtilsMessengerCallbackDataEXT* pCallbackData, void* pUserData)
+        {
+            std::cerr << "validation layer: " << pCallbackData->pMessage << '\n';
+            return VK_FALSE;
+        }
     };
 }

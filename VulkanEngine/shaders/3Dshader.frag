@@ -22,7 +22,7 @@ layout (binding = 4) uniform sampler2D specularTexSampler;
 
 const vec3 lightDirection = normalize(vec3(0.577f, -0.577f, 0.577f));
 
-#define LAMBER_MODE 0
+#define LAMBERT_MODE 0
 #define NORMAL_MODE 1
 #define SPECULAR_MODE 2
 #define COMBINED_MODE 3
@@ -51,7 +51,7 @@ void main() {
     const float gLightIntensity = 7.0f;
     const float gShininess = 25.0f;
 
-    const bool usingNormalMap = pushConstantsBlock.usingNormalMap == 1;
+    const bool usingNormalMap = bool(pushConstantsBlock.usingNormalMap == 1);
     vec3 ambient = vec3(0.003f, 0.003f, 0.003f);
 
     // Sampling color from maps
@@ -81,7 +81,7 @@ void main() {
 
     switch (pushConstantsBlock.shadingMode)
     {
-        case LAMBER_MODE:
+        case LAMBERT_MODE:
             outColor = vec4(RemapToUnitRange(lightDirCos * diffuseMapSample), 1.0);
             break;
         case NORMAL_MODE:

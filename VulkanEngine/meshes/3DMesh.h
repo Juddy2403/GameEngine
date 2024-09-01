@@ -33,8 +33,7 @@ namespace VulkanEngine
         void Update(uint32_t currentFrame, UniformBufferObject ubo);
         void ClearVertices();
         void ClearIndices();
-        void UploadMesh(const VkCommandPool& commandPool, const VkQueue& graphicsQueue) const;
-        void MapBuffers() const;
+        void MapAndUploadMesh(const VkCommandPool& commandPool, const VkQueue& graphicsQueue) const;
 
         void Destroy() const;
         void Draw(const VkCommandBuffer& commandBuffer, uint32_t currentFrame) const;

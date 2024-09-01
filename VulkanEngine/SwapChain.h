@@ -26,6 +26,7 @@ namespace VulkanEngine
         void CreateSwapChain(const VkSurfaceKHR &surface, GLFWwindow *window, const QueueFamilyIndices &indices);
         VkSwapchainKHR &GetSwapChain() { return m_SwapChain; }
         ImageView &GetImageView() { return m_ImageView; }
+        ImageView GetImageView() const { return m_ImageView; }
         void DestroySwapChain() const;
     private:
         VkSwapchainKHR m_SwapChain = VK_NULL_HANDLE;

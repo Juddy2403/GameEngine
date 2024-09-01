@@ -23,8 +23,7 @@ namespace VulkanEngine
         void Update(uint32_t currentFrame);
         void ClearVertices();
         void ClearIndices();
-        void UploadMesh(const VkCommandPool& commandPool, const VkQueue& graphicsQueue) const;
-        void MapBuffers() const;
+        void MapAndUploadMesh(const VkCommandPool& commandPool, const VkQueue& graphicsQueue) const;
 
         void AddVertex(const glm::vec2 &pos, const glm::vec3& color = {1, 1, 1});
         void AddVertex(const Vertex2D &vertex);

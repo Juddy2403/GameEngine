@@ -1,34 +1,6 @@
 {
   "meshes": [
-    {
-      "type": "2D",
-      "shape": "rect",
-      "position": [ -0.5, -0.5 ],
-      "size": 0.5
-    },
-    {
-      "type": "2D",
-      "shape": "circle",
-      "position": [ -0.5, 0.5 ],
-      "radius": 0.3,
-      "segments": 20
-    },
-    {
-      "type": "2D",
-      "shape": "roundedRect",
-      "width": 0.5,
-      "height": 0.2,
-      "position": [ 0.5, -0.2 ],
-      "radius": 0.1,
-      "segments": 20
-    },
-    {
-      "type": "3D",
-      "shape": "cube",
-      "position": [ -2, -2, 4 ],
-      "size": 1,
-      "rotation": [ 0, 90, 0 ]
-    },
+
     {
       "type": "3D",
       "shape": "model",
@@ -40,57 +12,7 @@
         "specular": "../Data/textures/vehicle_specular.png"
       },
       "rotationPerSecond": [ 0, 90, 0 ],
-      "position": [ 0, -10, 50 ]
-    },
-    {
-      "type": "3D",
-      "shape": "model",
-      "modelPath": "../Data/vehicle.obj",
-      "texturePaths": {
-        "albedo": "../Data/textures/vehicle_diffuse.png",
-        "normal": "../Data/textures/vehicle_normal.png",
-        "gloss": "../Data/textures/vehicle_gloss.png",
-        "specular": "../Data/textures/vehicle_specular.png"
-      },
-      "rotationPerSecond": [ 0, 90, 0 ],
-      "position": [ 0, -10, 50 ]
-    },
-    {
-      "type": "3D",
-      "shape": "model",
-      "modelPath": "../Data/vehicle.obj",
-      "texturePaths": {
-        "albedo": "../Data/textures/vehicle_diffuse.png",
-        "normal": "../Data/textures/vehicle_normal.png",
-        "gloss": "../Data/textures/vehicle_gloss.png",
-        "specular": "../Data/textures/vehicle_specular.png"
-      },
-      "rotationPerSecond": [ 0, 90, 0 ],
-      "position": [ 0, -10, 50 ]
-    },
-    {
-      "type": "3D",
-      "shape": "model",
-      "modelPath": "../Data/boat.obj",
-      "texturePaths": {
-        "albedo": "../Data/textures/boat.jpg"
-      },
-      "rotation": [ 90, 0, 90 ],
-      "position": [ 0, -10, 20 ]
-    },
-    {
-      "type": "3D",
-      "shape": "model",
-      "modelPath": "../Data/007jillie.obj",
-      "position": [ -20, -10, 20 ],
-      "rotationPerSecond": [ 0, 40, 0 ],
-      "scale": [ 0.1, 0.1, 0.1 ]
-    },
-    {
-      "type": "3D",
-      "shape": "sphere",
-      "position": [ 3, 0, 5 ],
-      "radius": 1
+      "position": [ 0, 0, 50 ]
     }
   ]
 }

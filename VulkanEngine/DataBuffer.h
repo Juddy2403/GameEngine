@@ -10,10 +10,9 @@ namespace VulkanEngine
         DataBuffer(const DataBuffer& other) = delete;
         DataBuffer& operator=(const DataBuffer& other) = delete;
         DataBuffer(DataBuffer&& other) noexcept = delete; 
-        DataBuffer& operator=(DataBuffer&& other) noexcept = delete; 
+        DataBuffer& operator=(DataBuffer&& other) noexcept = delete;
 
-        void Upload(const VkCommandPool& commandPool, const VkQueue& graphicsQueue);
-        void Map(VkDeviceSize size, const void* data);
+        void MapAndUpload(VkDeviceSize size, const void* data, VkCommandPool const& commandPool, VkQueue const& graphicsQueue);
         void Destroy() const;
 
         //Used for the draw function inside Mesh3D

@@ -26,16 +26,10 @@ void Mesh2D::ClearIndices()
     m_Indices.clear();
 }
 
-void Mesh2D::UploadMesh(VkCommandPool const& commandPool, VkQueue const& graphicsQueue) const
+void Mesh2D::MapAndUploadMesh(VkCommandPool const& commandPool, VkQueue const& graphicsQueue) const
 {
-    m_VertexBuffer->Upload(commandPool, graphicsQueue);
-    m_IndexBuffer->Upload(commandPool, graphicsQueue);
-}
-
-void Mesh2D::MapBuffers() const
-{
-    m_VertexBuffer->Map(m_Vertices.size() * sizeof(m_Vertices[0]), m_Vertices.data());
-    m_IndexBuffer->Map(m_Indices.size() * sizeof(m_Indices[0]), m_Indices.data());
+    m_VertexBuffer->MapAndUpload(m_Vertices.size() * sizeof(m_Vertices[0]), m_Vertices.data(), commandPool, graphicsQueue);
+    m_IndexBuffer->MapAndUpload(m_Indices.size() * sizeof(m_Indices[0]), m_Indices.data(), commandPool, graphicsQueue);
 }
 
 void Mesh2D::Destroy() const
